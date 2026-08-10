@@ -224,6 +224,12 @@ dart run build_runner build --delete-conflicting-outputs
 
 # Run on the selected device
 flutter run
+
+# Generate App Icons
+dart run flutter_launcher_icons
+
+# Generate Native Splash Screen
+dart run flutter_native_splash:create
 ```
 
 ## 🧪 Verification

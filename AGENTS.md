@@ -71,6 +71,9 @@ For every public class/method, add a doc comment following the language's standa
 - Code analysis: `flutter analyze`
 - Run tests: `flutter test`
 - Use `--delete-conflicting-outputs` on build_runner to prevent compilation deadlocks from stale generated files.
+- Generate App Icons: `dart run flutter_launcher_icons`
+- Generate Native Splash Screen: `dart run flutter_native_splash:create`
+- Icon/splash source assets live in `assets/icon/` and are configured in the `flutter_launcher_icons` / `flutter_native_splash` blocks of `pubspec.yaml`.
 
 ### Architecture & Layer Boundaries
 This is a Local-First, AI-Native boilerplate utilizing Clean Architecture under a Feature-First approach:

@@ -43,6 +43,7 @@ dependencies:
   path_provider: ^2.1.6
   dio: ^5.10.0
   intl: ^0.20.2
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +56,7 @@ dev_dependencies:
   injectable_generator: ^3.0.2
   isar_community_generator: ^3.3.2
   import_lint: ^2.0.0
+  flutter_launcher_icons: ^0.14.1
 
 dependency_overrides:
   analyzer: 10.2.0
@@ -70,6 +72,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/icon/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -101,3 +106,48 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# ------------------------------------------------------------------------------
+# App Icon Generation (flutter_launcher_icons)
+# Run: dart run flutter_launcher_icons
+# ------------------------------------------------------------------------------
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
+  # Standard Icon (Light Theme / Old iOS / Fallback)
+  image_path: "assets/icon/app_icon.png"
+
+  # iOS 18+ Dark Mode
+  image_path_ios_dark: "assets/icon/app_icon_dark.png"
+
+  # iOS 18+ Tinted Mode
+  image_path_ios_tinted: "assets/icon/app_icon_monochrome.png"
+
+  # Android Adaptive Icons (API 26+)
+  adaptive_icon_background: "#4f378a"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+  # Android 13+ Dynamic Themed Icons
+  adaptive_icon_monochrome: "assets/icon/app_icon_monochrome.png"
+
+# ------------------------------------------------------------------------------
+# Native Splash Screen (flutter_native_splash)
+# Run: dart run flutter_native_splash:create
+# ------------------------------------------------------------------------------
+flutter_native_splash:
+  color: "#FDF7FF"
+  color_dark: "#141218"
+
+  image: "assets/icon/app_icon_foreground.png"
+  image_dark: "assets/icon/app_icon_foreground.png"
+
+  android_12:
+    image: "assets/icon/app_icon_foreground.png"
+    image_dark: "assets/icon/app_icon_foreground.png"
+    icon_background_color: "#4f378a"
+    icon_background_color_dark: "#4f378a"
+
+  android: true
+  ios: true
