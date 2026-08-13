@@ -58,6 +58,27 @@ dev_dependencies:
   import_lint: ^2.0.0
   flutter_launcher_icons: ^0.14.1
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
+  # 1. Standard Icon (iOS Light Mode / Legacy iOS / Fallback)
+  image_path: "assets/icon/app_icon.png"
+
+  # 2. iOS 18+ Dark Mode
+  image_path_ios_dark: "assets/icon/app_icon_dark.png"
+
+  # 3. iOS 18+ Tinted Mode
+  image_path_ios_tinted: "assets/icon/app_icon_monochrome.png"
+  
+  # Android Adaptive Icons (API 26+)
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+  # Android 13+ Dynamic Themed Icons (Material You)
+  adaptive_icon_monochrome: "assets/icon/app_icon_monochrome.png"
+
 dependency_overrides:
   analyzer: 10.2.0
   dart_style: 3.1.7
@@ -107,38 +128,9 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 
-# ------------------------------------------------------------------------------
-# App Icon Generation (flutter_launcher_icons)
-# Run: dart run flutter_launcher_icons
-# ------------------------------------------------------------------------------
-flutter_launcher_icons:
-  android: true
-  ios: true
-  remove_alpha_ios: true
-
-  # 1. Standard Icon (iOS Light Mode / Legacy iOS / Fallback)
-  image_path: "assets/icon/app_icon.png"
-
-  # 2. iOS 18+ Dark Mode
-  image_path_ios_dark: "assets/icon/app_icon_dark.png"
-
-  # 3. iOS 18+ Tinted Mode
-  image_path_ios_tinted: "assets/icon/app_icon_monochrome.png"
-  
-  # Android Adaptive Icons (API 26+)
-  adaptive_icon_background: "#3F51B5"
-  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
-
-  # Android 13+ Dynamic Themed Icons (Material You)
-  adaptive_icon_monochrome: "assets/icon/app_icon_monochrome.png"
-
-# ------------------------------------------------------------------------------
-# Native Splash Screen (flutter_native_splash)
-# Run: dart run flutter_native_splash:create
-# ------------------------------------------------------------------------------
 flutter_native_splash:
-  color: "#FFFFFF"
-  color_dark: "#3F51B5"
+  color: "#FDF7FF"
+  color_dark: "#141218"
 
   image: "assets/icon/splash_light.png"
   image_dark: "assets/icon/splash_dark.png"
@@ -146,8 +138,8 @@ flutter_native_splash:
   android_12:
     image: "assets/icon/app_icon_foreground.png"
     image_dark: "assets/icon/app_icon_foreground.png"
-    icon_background_color: "#FFFFFF"
-    icon_background_color_dark: "#3F51B5"
+  icon_background_color: "#FDF7FF"
+  icon_background_color_dark: "#141218"
 
   android: true
   ios: true
