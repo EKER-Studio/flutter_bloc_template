@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 
 import 'core/presentation/cubit/app_theme_cubit.dart';
 import 'core/presentation/cubit/app_theme_state.dart';
+import 'core/presentation/theme/app_theme.dart';
 import 'features/settings/domain/entities/user_preferences.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/todos/presentation/bloc/todo_bloc.dart';
@@ -47,17 +48,8 @@ class _AppView extends StatelessWidget {
           title: 'Flutter BLoC Boilerplate',
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.indigo,
-              brightness: Brightness.dark,
-            ),
-            useMaterial3: true,
-          ),
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
           themeMode: _mapThemeMode(state.mode),
           home: const TodoScreen(),
         );

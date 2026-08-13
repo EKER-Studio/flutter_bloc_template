@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 import 'package:flutter_bloc_boilerplate/core/presentation/cubit/app_theme_cubit.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/theme/app_theme.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/presentation/screens/settings_screen.dart';
@@ -64,10 +65,7 @@ void main() {
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-            useMaterial3: true,
-          ),
+          theme: AppTheme.lightTheme,
           home: const SettingsScreen(),
         ),
       ),
