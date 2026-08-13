@@ -79,7 +79,7 @@ For every public class/method, add a doc comment following the language's standa
 This is a Local-First, AI-Native boilerplate utilizing Clean Architecture under a Feature-First approach:
 - **Domain Layer** (`lib/features/<feature>/domain/`): Pure Dart logic — entities, repository interfaces, use cases. NO Flutter, BLoC, or GetIt imports allowed here.
 - **Data Layer** (`lib/features/<feature>/data/`): Repository implementations, Isar models, mappers, utilizing `isar_community`.
-- **Presentation Layer** (`lib/features/<feature>/presentation/`): UI widgets, BLoC/Cubit state management.
+- **Presentation Layer** (`lib/features/<feature>/presentation/`): UI widgets, BLoC state management.
 - **DI:** GetIt + Injectable (`@injectable`/`@lazySingleton`) for dependency injection. Regenerate after adding/changing annotations via the build runner command above.
 - **State Management:** BLoC (`flutter_bloc`) strictly.
 - **Data Flow:** UI (`BlocBuilder`/`BlocListener`) -> BLoC (`Bloc`) -> Repository Interface (domain) -> Repository Impl (data) -> Local DB (`isar_community`).
@@ -98,14 +98,14 @@ This is a Local-First, AI-Native boilerplate utilizing Clean Architecture under 
 - Regenerate whenever annotations change (see Build & Generation Commands above).
 
 ### Lifecycle & Resource Disposal Checklist
-Every BLoC/Cubit with a `StreamSubscription` must override `close()` and cancel it there. Before considering any feature involving streams, timers, or animations complete, verify:
+Every BLoC with a `StreamSubscription` must override `close()` and cancel it there. Before considering any feature involving streams, timers, or animations complete, verify:
 - Every `StreamSubscription` is cancelled in `close()`.
 - Every `Timer` or `AnimationController` is properly disposed.
 - All Isar dynamic query streams are closed or managed via BLoC lifecycle.
 
 ### Testing Conventions
 - **Golden tests** are tagged with `@Tags(['golden'])` and skipped on non-macOS (`skip: !Platform.isMacOS`); config lives in `dart_test.yaml`.
-- **HydratedCubit test setup:** tests for `AppThemeCubit` or any widget using it must set `HydratedBloc.storage = _TestStorage()` (an in-memory `Storage` implementation).
+- **Bloc unit tests** use `bloc_test` with `blocTest<Bloc, State>`; state-level serialization helpers are tested directly with plain `test`.
 - **Fake repo leak prevention:** `FakeTodoRepository` and `FakeUserPreferencesRepository` expose a `dispose()` method — always call it in `tearDown` to close the internal `StreamController`.
 - **Wrap-pattern repos** (e.g. `_FailingOnceTodoRepository`) contain a `FakeTodoRepository` inside them — ensure the inner fake is also disposed in `tearDown`.
 

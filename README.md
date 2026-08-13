@@ -20,14 +20,14 @@ This application serves as a full-fledged testing ground for the implemented pat
 - **Full CRUD** for tasks (Todo).
 - **Todo List**: A reactive list with checkboxes and Swipe-to-delete functionality.
 - **Todo Detail Screen**: A standalone, independent view that fetches a specific resource by ID, protecting the application against memory leaks by leveraging constructor injection, explicit event-driven resource fetching, and native resource deallocation when the `BlocProvider` is popped from the widget tree.
-- **Settings Module**: Implementation of a global configuration layer (`ThemeMode`) backed by an Isar database singleton collection (`id=0`), reactively bound to the root `MaterialApp` via a `Cubit`.
-- **Testability**: A comprehensive suite of unit tests (BLoC/Cubit) and UI tests (Widget Tests).
+- **Settings Module**: Implementation of a global configuration layer (`ThemeMode`) backed by an Isar database singleton collection (`id=0`), reactively bound to the root `MaterialApp` via a `BLoC`.
+- **Testability**: A comprehensive suite of unit tests (BLoC) and UI tests (Widget Tests).
 - **Visual Regression (Screenshot Testing)**: Implementation of Golden Tests to ensure pixel-perfect stability across the app UI.
 
 ## 🛠 Tech Stack
 
 - **Framework**: [Flutter](https://flutter.dev/)
-- **State Management**: [BLoC / Cubit](https://bloclibrary.dev/) (via `flutter_bloc`)
+- **State Management**: [BLoC](https://bloclibrary.dev/) (via `flutter_bloc`)
 - **Dependency Injection & Service Locator**: [GetIt](https://pub.dev/packages/get_it) & [Injectable](https://pub.dev/packages/injectable) (powered by `build_runner` code generation)
 - **Database**: [Isar Community](https://pub.dev/packages/isar_community) (type-safe, reactive streams)
 - **Architecture**: Clean Architecture (Feature-First)
@@ -66,7 +66,7 @@ An architect is defined by what they choose *not* to include. Below is the techn
 | **Freezed / Equatable** | Native Dart 3+ features (Records, Pattern Matching, and sealed Class Modifiers) significantly reduce the need for additional code-generation layers to achieve data immutability and deep comparison in standard use cases. |
 | **Riverpod** | BLoC provides explicit, event-driven state management with a unidirectional data flow that is easier to reason about in complex Local-First scenarios. Combined with GetIt for dependency injection, the architecture avoids the implicit provider graph and widget-ref-scaffolding of Riverpod, resulting in more testable and debuggable code. |
 | **GoRouter / AutoRoute** | Navigation requirements vary drastically between simple apps and complex multi-module systems. This blueprint leaves navigation unopinionated, allowing you to use pure Flutter Navigator or drop in your preferred routing layer seamlessly. |
-| **Hive / Drift** | Isar (Community) was chosen for its native multi-platform speed, type-safe query links, and powerful watch streams, which integrate flawlessly with BLoC/Cubit reactive pipelines. |
+| **Hive / Drift** | Isar (Community) was chosen for its native multi-platform speed, type-safe query links, and powerful watch streams, which integrate flawlessly with BLoC reactive pipelines. |
 
 ## 📂 Project Structure (Feature-First)
 
@@ -103,7 +103,7 @@ lib/
     └── settings/
         ├── domain/              # -> user_preferences.dart + repository contract
         ├── data/                # -> Isar singleton model (id=0), mapper, repository
-        └── presentation/        # -> cubit/settings_cubit.dart, screens/settings_screen.dart
+        └── presentation/        # -> bloc/settings_bloc.dart, settings_event.dart, settings_state.dart
 ```
 
 ---
@@ -122,7 +122,7 @@ classDiagram
     namespace Presentation {
         class TodoDetailScreen
         class TodoBloc
-        class SettingsCubit
+        class SettingsBloc
     }
 
     %% Data Layer
@@ -147,14 +147,14 @@ classDiagram
         }
     }
 
-    %% Dependencies UI -> Bloc/Cubit -> Domain
+    %% Dependencies UI -> Bloc -> Domain
     TodoDetailScreen --> TodoBloc : Injects (via GetIt)
     TodoBloc --> TodoRepository : Injects (via GetIt)
     TodoBloc ..> Todo : Holds state (sealed class)
 
-    SettingsScreen --> SettingsCubit : Injects (via GetIt)
-    SettingsCubit --> UserPreferencesRepository : Injects (via GetIt)
-    SettingsCubit ..> UserPreferences : Holds state (sealed class)
+    SettingsScreen --> SettingsBloc : Injects (via GetIt)
+    SettingsBloc --> UserPreferencesRepository : Injects (via GetIt)
+    SettingsBloc ..> UserPreferences : Holds state (sealed class)
 
     %% Dependencies Data -> Domain
     TodoRepositoryImpl ..|> TodoRepository : Implements
@@ -207,7 +207,7 @@ sequenceDiagram
 
 1. **I/O Isolation Pattern**: Mappers (e.g., `TodoMapper`), following best practices, remain fully **synchronous, stateless functions (extensions)**. The mapper never executes I/O operations.
 2. **Single Source of Truth via ID**: Layers exchange only the simplest identifiers (Int/String). Every new screen, component, or dialog fetches the latest data structure independently. This eliminates the risk of passing outdated snapshots through navigation parameters.
-3. **Constructor Injection & Resource Deallocation**: BLoCs and Cubits receive their repository dependencies via constructor injection (managed by GetIt/Injectable). When a screen is popped from the widget tree, the corresponding `BlocProvider` is disposed, and the BLoC's `close()` method cancels the Isar stream subscription, thereby conserving RAM and preventing memory leaks.
+3. **Constructor Injection & Resource Deallocation**: BLoCs receive their repository dependencies via constructor injection (managed by GetIt/Injectable). When a screen is popped from the widget tree, the corresponding `BlocProvider` is disposed, and the BLoC's `close()` method cancels the Isar stream subscription, thereby conserving RAM and preventing memory leaks.
 
 ---
 
@@ -244,13 +244,13 @@ flutter analyze
 flutter test
 ```
 
-- **BLoC/Cubit Tests (Unit)**: Validate loading / success / failure states, intercept CRUD logic, confirm stream subscription cancellation, and verify direct reactive I/O operations. Powered by `bloc_test` and `mocktail`.
+- **BLoC Tests (Unit)**: Validate loading / success / failure states, intercept event handling, confirm stream subscription cancellation, and verify direct reactive I/O operations. Powered by `bloc_test` and `mocktail`.
 - **Widget Tests (UI)**: Dedicated, simulated resources using `async*` events are injected into the widgets to faithfully replicate the database's delay cycle (fixing potential `pumpAndSettle` pitfalls).
 - **Golden Tests**: Verifies UI components pixel-by-pixel for Todo empty/populated states and the Settings screen, freezing viewport size, theme-related inputs, and deterministic fixture data.
 
 ## 🗺️ Roadmap
 
-- [x] BLoC + Cubit state management with `flutter_bloc`
+- [x] BLoC state management with `flutter_bloc`
 - [x] GetIt & Injectable compile-time dependency injection
 - [x] Isar Community database integration with reactive streams
 - [x] Strict I/O Isolation Pattern via Synchronous Mappers

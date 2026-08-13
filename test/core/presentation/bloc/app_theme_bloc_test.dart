@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_bloc_boilerplate/core/errors/failure.dart';
-import 'package:flutter_bloc_boilerplate/core/presentation/cubit/app_theme_cubit.dart';
-import 'package:flutter_bloc_boilerplate/core/presentation/cubit/app_theme_state.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_bloc.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_event.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_state.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/repositories/user_preferences_repository.dart';
 
@@ -98,32 +100,72 @@ void main() {
     });
   });
 
-  group('AppThemeCubit', () {
-    test(
+  group('AppThemeBloc', () {
+    late StreamController<UserThemeMode> controller;
+
+    setUp(() {
+      controller = StreamController<UserThemeMode>();
+      addTearDown(controller.close);
+    });
+
+    blocTest<AppThemeBloc, AppThemeState>(
       'initial state is system when no theme stream value is emitted yet',
-      () {
-        final controller = StreamController<UserThemeMode>();
-        final cubit = AppThemeCubit(_TestThemeRepository(controller.stream));
-        expect(cubit.state.mode, UserThemeMode.system);
-        controller.close();
-        cubit.close();
+      build: () => AppThemeBloc(_TestThemeRepository(controller.stream)),
+      act: (bloc) async {
+        bloc.add(const AppThemeWatchStarted());
+        await Future<void>.delayed(Duration.zero);
+      },
+      expect: () => const [],
+      verify: (bloc) {
+        expect(bloc.state.mode, UserThemeMode.system);
       },
     );
 
-    test('reacts to theme mode updates from the repository stream', () async {
-      final controller = StreamController<UserThemeMode>();
-      final cubit = AppThemeCubit(_TestThemeRepository(controller.stream));
+    blocTest<AppThemeBloc, AppThemeState>(
+      'reacts to theme mode updates from the repository stream',
+      build: () => AppThemeBloc(_TestThemeRepository(controller.stream)),
+      act: (bloc) async {
+        bloc.add(const AppThemeWatchStarted());
+        await Future<void>.delayed(Duration.zero);
+        controller.add(UserThemeMode.dark);
+        await Future<void>.delayed(Duration.zero);
+        controller.add(UserThemeMode.light);
+        await Future<void>.delayed(Duration.zero);
+      },
+      expect: () => [
+        isA<AppThemeState>().having((s) => s.mode, 'mode', UserThemeMode.dark),
+        isA<AppThemeState>().having((s) => s.mode, 'mode', UserThemeMode.light),
+      ],
+    );
 
-      controller.add(UserThemeMode.dark);
-      await Future<void>.delayed(Duration.zero);
-      expect(cubit.state.mode, UserThemeMode.dark);
+    blocTest<AppThemeBloc, AppThemeState>(
+      'handles AppThemeModeChanged events dispatched directly',
+      build: () => AppThemeBloc(_TestThemeRepository(controller.stream)),
+      act: (bloc) async {
+        bloc.add(const AppThemeWatchStarted());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const AppThemeModeChanged(UserThemeMode.dark));
+        bloc.add(const AppThemeModeChanged(UserThemeMode.light));
+        await Future<void>.delayed(Duration.zero);
+      },
+      expect: () => [
+        isA<AppThemeState>().having((s) => s.mode, 'mode', UserThemeMode.dark),
+        isA<AppThemeState>().having((s) => s.mode, 'mode', UserThemeMode.light),
+      ],
+    );
 
-      controller.add(UserThemeMode.light);
-      await Future<void>.delayed(Duration.zero);
-      expect(cubit.state.mode, UserThemeMode.light);
-
-      controller.close();
-      cubit.close();
-    });
+    blocTest<AppThemeBloc, AppThemeState>(
+      'cancels the watch subscription on close',
+      build: () => AppThemeBloc(_TestThemeRepository(controller.stream)),
+      act: (bloc) async {
+        bloc.add(const AppThemeWatchStarted());
+        await Future<void>.delayed(Duration.zero);
+        await bloc.close();
+      },
+      expect: () => const [],
+      verify: (bloc) {
+        expect(bloc.state.mode, UserThemeMode.system);
+      },
+    );
   });
 }

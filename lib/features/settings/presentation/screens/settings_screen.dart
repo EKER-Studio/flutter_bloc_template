@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/user_preferences.dart';
-import '../cubit/settings_cubit.dart';
-import '../cubit/settings_state.dart';
+import '../bloc/settings_bloc.dart';
+import '../bloc/settings_event.dart';
+import '../bloc/settings_state.dart';
 
 /// Screen displaying user settings and preferences.
 class SettingsScreen extends StatelessWidget {
@@ -13,7 +14,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SettingsCubit, SettingsState>(
+    return BlocListener<SettingsBloc, SettingsState>(
       listenWhen: (previous, current) =>
           current is SettingsLoadFailure && previous is! SettingsLoadFailure,
       listener: (context, state) {
@@ -23,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
           ).showSnackBar(SnackBar(content: Text(state.failure.userMessage)));
         }
       },
-      child: BlocBuilder<SettingsCubit, SettingsState>(
+      child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           return switch (state) {
             SettingsInitial() => const SizedBox.shrink(),
@@ -61,7 +62,9 @@ class SettingsScreen extends StatelessWidget {
             subtitle: const Text('Receive push notifications'),
             value: preferences.isNotificationsEnabled,
             onChanged: (value) {
-              context.read<SettingsCubit>().updateNotificationsEnabled(value);
+              context.read<SettingsBloc>().add(
+                SettingsNotificationsUpdated(value),
+              );
             },
           ),
         ],
@@ -76,7 +79,7 @@ class SettingsScreen extends StatelessWidget {
         groupValue: current,
         onChanged: (value) {
           if (value != null) {
-            context.read<SettingsCubit>().updateThemeMode(value);
+            context.read<SettingsBloc>().add(SettingsThemeModeUpdated(value));
             Navigator.of(dialogContext).pop();
           }
         },

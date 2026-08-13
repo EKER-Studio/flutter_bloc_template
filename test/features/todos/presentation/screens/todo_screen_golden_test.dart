@@ -6,11 +6,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import 'package:flutter_bloc_boilerplate/core/presentation/cubit/app_theme_cubit.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_bloc.dart';
+import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_event.dart';
 import 'package:flutter_bloc_boilerplate/core/presentation/theme/app_theme.dart';
-import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_event.dart';
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/bloc/todo_bloc.dart';
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/bloc/todo_event.dart';
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/screens/todo_screen.dart';
@@ -19,51 +20,27 @@ import 'package:flutter_bloc_boilerplate/l10n/app_localizations.dart';
 import '../../../../helpers/fake_todo_repository.dart';
 import '../../../../helpers/fake_user_preferences_repository.dart';
 
-/// In-memory [Storage] for use in tests so [AppThemeCubit] (a [HydratedCubit])
-/// can be instantiated without real file-system or web storage.
-class _TestStorage implements Storage {
-  final _store = <String, dynamic>{};
-
-  @override
-  dynamic read(String key) => _store[key];
-
-  @override
-  Future<void> write(String key, dynamic value) async {
-    _store[key] = value;
-  }
-
-  @override
-  Future<void> delete(String key) async {
-    _store.remove(key);
-  }
-
-  @override
-  Future<void> clear() async {
-    _store.clear();
-  }
-
-  @override
-  Future<void> close() async {}
-}
-
 void main() {
-  testWidgets('TodoListItem Golden Tests', (tester) async {
-    HydratedBloc.storage = _TestStorage();
+  testWidgets('TodoScreen Golden Test', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
 
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
-          BlocProvider<AppThemeCubit>(
-            create: (_) => AppThemeCubit(FakeUserPreferencesRepository()),
+          BlocProvider<AppThemeBloc>(
+            create: (_) =>
+                AppThemeBloc(FakeUserPreferencesRepository())
+                  ..add(const AppThemeWatchStarted()),
           ),
           BlocProvider<TodoBloc>(
             create: (_) =>
                 TodoBloc(FakeTodoRepository())..add(const WatchTodos()),
           ),
-          BlocProvider<SettingsCubit>(
-            create: (_) => SettingsCubit(FakeUserPreferencesRepository()),
+          BlocProvider<SettingsBloc>(
+            create: (_) =>
+                SettingsBloc(FakeUserPreferencesRepository())
+                  ..add(const SettingsWatchStarted()),
           ),
         ],
         child: MaterialApp(

@@ -11,14 +11,15 @@ import 'package:flutter_bloc_boilerplate/features/todos/presentation/bloc/todo_b
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/bloc/todo_event.dart';
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/bloc/todo_state.dart';
 import 'package:flutter_bloc_boilerplate/features/todos/presentation/screens/todo_screen.dart';
-import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_cubit.dart';
-import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_state.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_event.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_state.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 
 class MockTodoBloc extends MockBloc<TodoEvent, TodoState> implements TodoBloc {}
 
-class MockSettingsCubit extends MockCubit<SettingsState>
-    implements SettingsCubit {}
+class MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState>
+    implements SettingsBloc {}
 
 void main() {
   final dummyTodo = Todo(
@@ -37,13 +38,13 @@ void main() {
   });
 
   late MockTodoBloc mockTodoBloc;
-  late MockSettingsCubit mockSettingsCubit;
+  late MockSettingsBloc mockSettingsBloc;
 
   setUp(() {
     mockTodoBloc = MockTodoBloc();
-    mockSettingsCubit = MockSettingsCubit();
+    mockSettingsBloc = MockSettingsBloc();
     when(
-      () => mockSettingsCubit.state,
+      () => mockSettingsBloc.state,
     ).thenReturn(SettingsLoadSuccess(UserPreferences.defaults()));
   });
 
@@ -51,7 +52,7 @@ void main() {
     return MultiBlocProvider(
       providers: [
         BlocProvider<TodoBloc>.value(value: mockTodoBloc),
-        BlocProvider<SettingsCubit>.value(value: mockSettingsCubit),
+        BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
       ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

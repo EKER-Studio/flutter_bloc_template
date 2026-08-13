@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-import 'core/presentation/cubit/app_theme_cubit.dart';
-import 'core/presentation/cubit/app_theme_state.dart';
+import 'core/presentation/bloc/app_theme_bloc.dart';
+import 'core/presentation/bloc/app_theme_event.dart';
+import 'core/presentation/bloc/app_theme_state.dart';
 import 'core/presentation/theme/app_theme.dart';
 import 'features/settings/domain/entities/user_preferences.dart';
-import 'features/settings/presentation/cubit/settings_cubit.dart';
+import 'features/settings/presentation/bloc/settings_bloc.dart';
+import 'features/settings/presentation/bloc/settings_event.dart';
 import 'features/todos/presentation/bloc/todo_bloc.dart';
 import 'features/todos/presentation/bloc/todo_event.dart';
 import 'features/todos/presentation/screens/todo_screen.dart';
@@ -25,11 +27,13 @@ class App extends StatelessWidget {
         BlocProvider<TodoBloc>(
           create: (_) => GetIt.instance<TodoBloc>()..add(const WatchTodos()),
         ),
-        BlocProvider<SettingsCubit>(
-          create: (_) => GetIt.instance<SettingsCubit>(),
+        BlocProvider<SettingsBloc>(
+          create: (_) =>
+              GetIt.instance<SettingsBloc>()..add(const SettingsWatchStarted()),
         ),
-        BlocProvider<AppThemeCubit>(
-          create: (_) => GetIt.instance<AppThemeCubit>(),
+        BlocProvider<AppThemeBloc>(
+          create: (_) =>
+              GetIt.instance<AppThemeBloc>()..add(const AppThemeWatchStarted()),
         ),
       ],
       child: const _AppView(),
@@ -42,7 +46,7 @@ class _AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppThemeCubit, AppThemeState>(
+    return BlocBuilder<AppThemeBloc, AppThemeState>(
       builder: (context, state) {
         return MaterialApp(
           title: 'Flutter BLoC Boilerplate',

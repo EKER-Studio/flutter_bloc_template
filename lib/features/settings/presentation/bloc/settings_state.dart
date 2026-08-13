@@ -1,12 +1,12 @@
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/user_preferences.dart';
 
-/// States emitted by [SettingsCubit].
+/// States emitted by [SettingsBloc].
 sealed class SettingsState {
   const SettingsState();
 }
 
-/// Initial state before [SettingsCubit.init()] is called.
+/// Initial state before [SettingsBloc] begins watching preferences.
 class SettingsInitial extends SettingsState {
   /// Creates a [SettingsInitial] state.
   const SettingsInitial();

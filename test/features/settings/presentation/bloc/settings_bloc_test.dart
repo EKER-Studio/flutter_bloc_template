@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_bloc_boilerplate/core/errors/failure.dart';
-import 'package:flutter_bloc_boilerplate/core/presentation/cubit/app_theme_cubit.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/repositories/user_preferences_repository.dart';
-import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_cubit.dart';
-import 'package:flutter_bloc_boilerplate/features/settings/presentation/cubit/settings_state.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_event.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_state.dart';
 
 import '../../../../helpers/fake_user_preferences_repository.dart';
 
@@ -103,38 +102,10 @@ class _SilentRepository implements UserPreferencesRepository {
   }
 }
 
-/// In-memory [Storage] for use in tests so [AppThemeCubit] (a [HydratedCubit])
-/// can be instantiated without real file-system or web storage.
-class _TestStorage implements Storage {
-  final _store = <String, dynamic>{};
-
-  @override
-  dynamic read(String key) => _store[key];
-
-  @override
-  Future<void> write(String key, dynamic value) async {
-    _store[key] = value;
-  }
-
-  @override
-  Future<void> delete(String key) async {
-    _store.remove(key);
-  }
-
-  @override
-  Future<void> clear() async {
-    _store.clear();
-  }
-
-  @override
-  Future<void> close() async {}
-}
-
 void main() {
   late FakeUserPreferencesRepository repository;
 
   setUp(() {
-    HydratedBloc.storage = _TestStorage();
     repository = FakeUserPreferencesRepository();
   });
 
@@ -142,21 +113,43 @@ void main() {
     repository.dispose();
   });
 
-  group('SettingsCubit', () {
-    blocTest<SettingsCubit, SettingsState>(
-      'constructor emits LoadSuccess with defaults',
-      build: () => SettingsCubit(repository),
-      expect: () => [isA<SettingsLoadSuccess>()],
+  /// Pumps the event loop until [bloc] reaches a state satisfying [predicate],
+  /// guaranteeing the initial watch snapshot is loaded before an update event
+  /// is dispatched (the watch-stream delivery is asynchronous relative to
+  /// [SettingsWatchStarted]).
+  Future<void> waitForState(
+    SettingsBloc bloc,
+    bool Function(SettingsState state) predicate,
+  ) async {
+    while (!predicate(bloc.state)) {
+      await Future<void>.delayed(const Duration(milliseconds: 1));
+    }
+  }
+
+  group('SettingsBloc', () {
+    blocTest<SettingsBloc, SettingsState>(
+      'watch started emits LoadInProgress then LoadSuccess with defaults',
+      build: () => SettingsBloc(repository),
+      act: (bloc) => bloc.add(const SettingsWatchStarted()),
+      expect: () => [isA<SettingsLoadInProgress>(), isA<SettingsLoadSuccess>()],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
-      'updateThemeMode: watch stream emits updated theme',
-      build: () => SettingsCubit(repository),
-      act: (cubit) async {
-        await cubit.updateThemeMode(UserThemeMode.dark);
+    blocTest<SettingsBloc, SettingsState>(
+      'SettingsThemeModeUpdated: watch stream emits updated theme',
+      build: () => SettingsBloc(repository),
+      act: (bloc) async {
+        bloc.add(const SettingsWatchStarted());
+        await waitForState(bloc, (s) => s is SettingsLoadSuccess);
+        bloc.add(const SettingsThemeModeUpdated(UserThemeMode.dark));
       },
       wait: const Duration(milliseconds: 50),
       expect: () => [
+        isA<SettingsLoadInProgress>(),
+        isA<SettingsLoadSuccess>().having(
+          (s) => s.preferences.themeMode,
+          'themeMode',
+          UserThemeMode.system,
+        ),
         isA<SettingsLoadSuccess>().having(
           (s) => s.preferences.themeMode,
           'themeMode',
@@ -165,15 +158,22 @@ void main() {
       ],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
-      'updateNotificationsEnabled: watch stream emits updated preference',
-      build: () => SettingsCubit(repository),
-      act: (cubit) async {
-        await cubit.updateNotificationsEnabled(false);
+    blocTest<SettingsBloc, SettingsState>(
+      'SettingsNotificationsUpdated: emits updated preference immediately',
+      build: () => SettingsBloc(repository),
+      act: (bloc) async {
+        bloc.add(const SettingsWatchStarted());
+        await waitForState(bloc, (s) => s is SettingsLoadSuccess);
+        bloc.add(const SettingsNotificationsUpdated(false));
       },
       wait: const Duration(milliseconds: 50),
       expect: () => [
-        isA<SettingsLoadSuccess>(),
+        isA<SettingsLoadInProgress>(),
+        isA<SettingsLoadSuccess>().having(
+          (s) => s.preferences.isNotificationsEnabled,
+          'isNotificationsEnabled',
+          true,
+        ),
         isA<SettingsLoadSuccess>().having(
           (s) => s.preferences.isNotificationsEnabled,
           'isNotificationsEnabled',
@@ -182,13 +182,16 @@ void main() {
       ],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
-      'updateNotificationsEnabled: emits success without prior watch snapshot',
-      build: () => SettingsCubit(_SilentRepository()),
-      act: (cubit) async {
-        await cubit.updateNotificationsEnabled(false);
+    blocTest<SettingsBloc, SettingsState>(
+      'SettingsNotificationsUpdated: emits success without prior watch snapshot',
+      build: () => SettingsBloc(_SilentRepository()),
+      act: (bloc) async {
+        bloc.add(const SettingsWatchStarted());
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const SettingsNotificationsUpdated(false));
       },
       expect: () => [
+        isA<SettingsLoadInProgress>(),
         isA<SettingsLoadSuccess>().having(
           (s) => s.preferences.isNotificationsEnabled,
           'isNotificationsEnabled',
@@ -197,22 +200,24 @@ void main() {
       ],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
-      'updateThemeMode rolls back to last known preferences on failure',
+    blocTest<SettingsBloc, SettingsState>(
+      'SettingsThemeModeUpdated rolls back to last known preferences on failure',
       build: () {
         final failingRepo = _FailingOnceThemeRepository(
           repository,
           const DatabaseFailure('write error'),
         );
-        return SettingsCubit(failingRepo);
+        return SettingsBloc(failingRepo);
       },
-      act: (cubit) async {
-        // Let the constructor's stream microtask populate _lastKnownPreferences.
-        await Future<void>.delayed(Duration.zero);
-        await cubit.updateThemeMode(UserThemeMode.dark);
+      act: (bloc) async {
+        bloc.add(const SettingsWatchStarted());
+        // Let the watch stream microtask populate _lastKnownPreferences.
+        await waitForState(bloc, (s) => s is SettingsLoadSuccess);
+        bloc.add(const SettingsThemeModeUpdated(UserThemeMode.dark));
       },
       wait: const Duration(milliseconds: 50),
       expect: () => [
+        isA<SettingsLoadInProgress>(),
         isA<SettingsLoadSuccess>().having(
           (s) => s.preferences.themeMode,
           'themeMode',
@@ -226,21 +231,23 @@ void main() {
       ],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
+    blocTest<SettingsBloc, SettingsState>(
       'watch stream error without snapshot emits SettingsLoadFailure',
-      build: () => SettingsCubit(_ErrorStreamRepository()),
-      expect: () => [isA<SettingsLoadFailure>()],
+      build: () => SettingsBloc(_ErrorStreamRepository()),
+      act: (bloc) => bloc.add(const SettingsWatchStarted()),
+      expect: () => [isA<SettingsLoadInProgress>(), isA<SettingsLoadFailure>()],
     );
 
-    blocTest<SettingsCubit, SettingsState>(
+    blocTest<SettingsBloc, SettingsState>(
       'close() cancels subscription and does not emit after',
-      build: () => SettingsCubit(repository),
-      act: (cubit) async {
-        // Let the constructor's stream microtask emit the initial load.
+      build: () => SettingsBloc(repository),
+      act: (bloc) async {
+        bloc.add(const SettingsWatchStarted());
+        // Let the watch stream microtask emit the initial load.
         await Future<void>.delayed(Duration.zero);
-        await cubit.close();
+        await bloc.close();
       },
-      expect: () => [isA<SettingsLoadSuccess>()],
+      expect: () => [isA<SettingsLoadInProgress>(), isA<SettingsLoadSuccess>()],
     );
   });
 }

@@ -15,7 +15,7 @@ import '../widgets/todo_list_item.dart';
 ///
 /// ## Dependency scope contract
 ///
-/// Both [TodoBloc] and [SettingsCubit] are provided at the `App` level via
+/// Both [TodoBloc] and [SettingsBloc] are provided at the `App` level via
 /// `MultiBlocProvider` in `lib/app.dart`. This ensures that navigating to the
 /// settings screen (which sits outside the todo navigation stack) does not lose
 /// BLoC context — the widgets remain within the same provider ancestry. The

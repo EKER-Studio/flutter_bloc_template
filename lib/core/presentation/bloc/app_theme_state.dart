@@ -1,6 +1,6 @@
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 
-/// Serializable state for [AppThemeCubit].
+/// Serializable state for [AppThemeBloc].
 class AppThemeState {
   const AppThemeState(this.mode);
 
