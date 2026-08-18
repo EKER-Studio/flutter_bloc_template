@@ -220,7 +220,7 @@ The `injectable` library works alongside `isar_community_generator` under a shar
 flutter pub get
 
 # Generate files (.g.dart for Injectable DI graph, Isar schemas)
-dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build
 
 # Run on the selected device
 flutter run

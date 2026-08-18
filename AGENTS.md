@@ -66,11 +66,10 @@ For every public class/method, add a doc comment following the language's standa
 
 ### Build & Generation Commands
 - Install dependencies: `flutter pub get`
-- Run build runner: `dart run build_runner build --delete-conflicting-outputs`
-- Watch build runner: `dart run build_runner watch --delete-conflicting-outputs`
+- Run build runner: `dart run build_runner build`
+- Watch build runner: `dart run build_runner watch`
 - Code analysis: `flutter analyze`
 - Run tests: `flutter test`
-- Use `--delete-conflicting-outputs` on build_runner to prevent compilation deadlocks from stale generated files.
 - Generate App Icons: `dart run flutter_launcher_icons`
 - Generate Native Splash Screen: `dart run flutter_native_splash:create`
 - Icon/splash source assets live in `assets/icon/` and are configured in the `flutter_launcher_icons` / `flutter_native_splash` blocks of `pubspec.yaml`.
@@ -113,7 +112,7 @@ Every BLoC with a `StreamSubscription` must override `close()` and cancel it the
 After any modification within the `lib/**` directory, you MUST execute the following pipeline in strict order (matches `before_push.sh`):
 1. `flutter pub get`
 2. `flutter gen-l10n`
-3. `dart run build_runner build --delete-conflicting-outputs`
+3. `dart run build_runner build`
 4. `dart format --output=none --set-exit-if-changed lib test bin scripts`
 5. `flutter analyze`
 6. `flutter test`
