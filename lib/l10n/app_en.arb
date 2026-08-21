@@ -1,3 +1,26 @@
 {
-  "appTitle": "Todos"
+  "@@locale": "en",
+  "appTitle": "Todos",
+  "settings": "Settings",
+  "theme": "Theme",
+  "themeSystem": "System default",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "notifications": "Notifications",
+  "add": "Add",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "undo": "Undo",
+  "retry": "Retry",
+  "noTodos": "No todos yet",
+  "noTodosDescription": "Add a new task using the button below",
+  "todoDeleted": "Deleted \"{title}\"",
+  "@todoDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  }
 }

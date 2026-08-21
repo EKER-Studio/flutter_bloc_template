@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/errors/failure.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/user_preferences.dart';
 import '../bloc/settings_bloc.dart';
 import '../bloc/settings_event.dart';
@@ -14,6 +16,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocListener<SettingsBloc, SettingsState>(
       listenWhen: (previous, current) =>
           current is SettingsLoadFailure && previous is! SettingsLoadFailure,
@@ -29,15 +32,15 @@ class SettingsScreen extends StatelessWidget {
           return switch (state) {
             SettingsInitial() => const SizedBox.shrink(),
             SettingsLoadInProgress() => Scaffold(
-              appBar: AppBar(title: const Text('Settings')),
-              body: const Center(child: CircularProgressIndicator()),
+              appBar: AppBar(title: Text(l10n.settings)),
+              body: const AppLoadingIndicator(),
             ),
             SettingsLoadSuccess(:final preferences) => _buildSettings(
               context,
               preferences,
             ),
             SettingsLoadFailure(:final failure) => Scaffold(
-              appBar: AppBar(title: const Text('Settings')),
+              appBar: AppBar(title: Text(l10n.settings)),
               body: Center(child: Text('Error: ${failure.userMessage}')),
             ),
           };
@@ -47,18 +50,19 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Scaffold _buildSettings(BuildContext context, UserPreferences preferences) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
           ListTile(
-            title: const Text('Theme'),
-            subtitle: Text(_themeLabel(preferences.themeMode)),
+            title: Text(l10n.theme),
+            subtitle: Text(_themeLabel(context, preferences.themeMode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showThemePicker(context, preferences.themeMode),
           ),
           SwitchListTile(
-            title: const Text('Notifications'),
+            title: Text(l10n.notifications),
             subtitle: const Text('Receive push notifications'),
             value: preferences.isNotificationsEnabled,
             onChanged: (value) {
@@ -73,6 +77,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showThemePicker(BuildContext context, UserThemeMode current) {
+    final l10n = AppLocalizations.of(context);
     showDialog<UserThemeMode>(
       context: context,
       builder: (dialogContext) => RadioGroup<UserThemeMode>(
@@ -84,10 +89,10 @@ class SettingsScreen extends StatelessWidget {
           }
         },
         child: SimpleDialog(
-          title: const Text('Choose Theme'),
+          title: Text(l10n.theme),
           children: UserThemeMode.values.map((mode) {
             return RadioListTile<UserThemeMode>(
-              title: Text(_themeLabel(mode)),
+              title: Text(_themeLabel(context, mode)),
               value: mode,
             );
           }).toList(),
@@ -96,11 +101,12 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  String _themeLabel(UserThemeMode mode) {
+  String _themeLabel(BuildContext context, UserThemeMode mode) {
+    final l10n = AppLocalizations.of(context);
     return switch (mode) {
-      UserThemeMode.light => 'Light',
-      UserThemeMode.dark => 'Dark',
-      UserThemeMode.system => 'System default',
+      UserThemeMode.light => l10n.themeLight,
+      UserThemeMode.dark => l10n.themeDark,
+      UserThemeMode.system => l10n.themeSystem,
     };
   }
 }

@@ -64,12 +64,13 @@ class TodoScreen extends StatelessWidget {
   }
 
   Scaffold _buildList(BuildContext context, List<Todo> todos) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).appTitle),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
               context.push('/settings');
@@ -78,9 +79,9 @@ class TodoScreen extends StatelessWidget {
         ],
       ),
       body: todos.isEmpty
-          ? const AppEmptyView(
-              title: 'No todos yet',
-              description: 'Add a new task using the button below',
+          ? AppEmptyView(
+              title: l10n.noTodos,
+              description: l10n.noTodosDescription,
             )
           : ListView.builder(
               itemCount: todos.length,
@@ -96,9 +97,9 @@ class TodoScreen extends StatelessWidget {
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
                         SnackBar(
-                          content: Text('Deleted "${todo.title}"'),
+                          content: Text(l10n.todoDeleted(todo.title)),
                           action: SnackBarAction(
-                            label: 'Undo',
+                            label: l10n.undo,
                             onPressed: () {
                               context.read<TodoBloc>().add(TodoRestored(todo));
                             },
@@ -118,10 +119,12 @@ class TodoScreen extends StatelessWidget {
   }
 
   Scaffold _buildError(BuildContext context, String message) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context).appTitle)),
+      appBar: AppBar(title: Text(l10n.appTitle)),
       body: AppErrorView(
         message: message,
+        retryLabel: l10n.retry,
         onRetry: () => context.read<TodoBloc>().add(const WatchTodos()),
       ),
     );

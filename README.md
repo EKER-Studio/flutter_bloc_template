@@ -27,20 +27,22 @@ This application serves as a full-fledged testing ground for the implemented pat
 ## 🛠 Tech Stack
 
 - **Framework**: [Flutter](https://flutter.dev/)
-- **State Management**: [BLoC](https://bloclibrary.dev/) (via `flutter_bloc`)
+- **State Management**: [BLoC](https://bloclibrary.dev/) & [HydratedBloc](https://pub.dev/packages/hydrated_bloc) (persisting UI preferences)
+- **Routing**: [GoRouter](https://pub.dev/packages/go_router) (declarative routing)
 - **Dependency Injection & Service Locator**: [GetIt](https://pub.dev/packages/get_it) & [Injectable](https://pub.dev/packages/injectable) (powered by `build_runner` code generation)
 - **Database**: [Isar Community](https://pub.dev/packages/isar_community) (type-safe, reactive streams)
-- **Architecture**: Clean Architecture (Feature-First)
-- **Testing**: `flutter_test`, `mocktail` (for repository mocking), `bloc_test` (for BLoC unit testing)
-- **Misc**: `dio` (for future network sync module), `intl` for elegant date formatting (e.g., on the details screen).
+- **Architecture**: Clean Architecture (Feature-First) with pure Domain Use Cases
+- **Testing**: `flutter_test`, `mocktail`, `bloc_test`, Golden screenshot tests
+- **Internationalization**: Flutter `gen-l10n` (`.arb` based with EN and PL support)
 
 ## 📐 Design Principles
 
 - **Feature-First Organization**: Keeps the codebase modular and self-contained as the application grows.
+- **Pure Domain with Use Cases**: Explicit use case classes isolate single business actions and make BLoCs lean and unit-testable.
 - **Local-First by Default**: The local database dictates the application state, ensuring 100% offline resilience.
 - **Dependency Inversion**: Strict compilation boundaries where Data and Presentation layers depend on the pure Domain core.
 - **Single Source of Truth**: UI components subscribe directly to reactive database streams via targeted identifiers.
-- **Minimal Dependencies**: Leveraging native Dart 3+ features (Records, Patterns, sealed classes) to minimize reliance on third-party macro layers.
+- **Minimal Dependencies**: Leveraging native Dart 3+ features (Records, Pattern Matching, sealed classes) to minimize reliance on third-party macro layers.
 - **Synchronous Mappers**: Complete isolation between database schemas and domain logic via stateless transformers.
 - **Test-Driven Predictability**: Built to support deterministic unit, widget, and visual regression (Golden) testing.
 
@@ -60,13 +62,13 @@ This blueprint is highly opinionated and tailored for specific architectural req
 
 An architect is defined by what they choose *not* to include. Below is the technical rationale behind selecting native patterns over several industry-standard packages in this blueprint:
 
-| Package | Why it was omitted |
+| Package | Why it was chosen / omitted |
 | :--- |:--- |
-| **Dio / Retrofit** | This is a **Local-First** architecture. The local database (Isar) is the single source of truth. Network layers belong in specific synchronization feature-modules, not as a core global dependency of a local starter. Dio is registered as an optional GetIt singleton for future sync module development. |
-| **Freezed / Equatable** | Native Dart 3+ features (Records, Pattern Matching, and sealed Class Modifiers) significantly reduce the need for additional code-generation layers to achieve data immutability and deep comparison in standard use cases. |
-| **Riverpod** | BLoC provides explicit, event-driven state management with a unidirectional data flow that is easier to reason about in complex Local-First scenarios. Combined with GetIt for dependency injection, the architecture avoids the implicit provider graph and widget-ref-scaffolding of Riverpod, resulting in more testable and debuggable code. |
-| **GoRouter / AutoRoute** | Navigation requirements vary drastically between simple apps and complex multi-module systems. This blueprint leaves navigation unopinionated, allowing you to use pure Flutter Navigator or drop in your preferred routing layer seamlessly. |
-| **Hive / Drift** | Isar (Community) was chosen for its native multi-platform speed, type-safe query links, and powerful watch streams, which integrate flawlessly with BLoC reactive pipelines. |
+| **GoRouter** | Declarative, URL-friendly navigation configured centrally in `lib/core/router/app_router.dart`, eliminating cross-feature direct screen imports. |
+| **HydratedBloc** | Automatic state serialization and hydration without requiring separate database models for simple presentation state (like theme mode). |
+| **Freezed / Equatable** | Native Dart 3+ features (Records, Pattern Matching, and sealed Class Modifiers) significantly reduce the need for additional code-generation layers to achieve data immutability and deep comparison. |
+| **Riverpod** | BLoC provides explicit, event-driven state management with a unidirectional data flow that is easier to reason about in complex Local-First scenarios. |
+| **Isar Community** | Chosen for its native multi-platform speed, type-safe query links, and powerful watch streams, which integrate flawlessly with BLoC reactive pipelines. |
 
 ## 📂 Project Structure (Feature-First)
 
@@ -74,36 +76,33 @@ The project is thematically divided by features. Each feature contains three ind
 
 ```text
 lib/
-├── main.dart                    # Entry point (configureDependencies + runApp)
-├── app.dart                     # MaterialApp + MultiBlocProvider
+├── main.dart                    # Entry point (HydratedStorage + DI init + runApp)
+├── app.dart                     # MaterialApp.router + MultiBlocProvider
 ├── core/
+│   ├── config/                  # AppConfig & AppEnvironment (APP_ENV)
 │   ├── database/                # Isar database module (@module, @preResolve)
-│   │   └── database_module.dart
 │   ├── di/                      # Dependency injection setup (GetIt + Injectable)
-│   │   ├── injection.dart       # @InjectableInit
-│   │   └── injection.config.dart # Generated (build_runner)
 │   ├── errors/                  # Failure sealed hierarchy
-│   │   └── failure.dart
-│   └── network/                 # Optional Dio network module (@module)
-│       └── network_module.dart
+│   ├── presentation/            # Reusable core widgets & AppTheme
+│   └── router/                  # Central GoRouter configuration
 └── features/
     ├── todos/
-    │   ├── domain/              # 1. DOMAIN LAYER (Independent)
+    │   ├── domain/              # 1. DOMAIN LAYER (Pure Dart)
     │   │   ├── entities/        # -> todo.dart
-    │   │   └── repositories/    # -> todo_repository.dart (interface)
-    │   ├── data/                # 2. DATA LAYER (Dependent on external APIs/DBs)
+    │   │   ├── repositories/    # -> todo_repository.dart (interface)
+    │   │   └── use_cases/       # -> watch_todos, add_todo, toggle_todo, delete_todo, restore_todo
+    │   ├── data/                # 2. DATA LAYER (Isar & external data)
     │   │   ├── models/          # -> todo_model.dart (Isar @collection)
     │   │   ├── mappers/         # -> todo_mapper.dart
-    │   │   └── repositories/    # -> todo_repository_impl.dart (Implementation)
-    │   └── presentation/        # 3. PRESENTATION LAYER (UI + State Management)
+    │   │   └── repositories/    # -> todo_repository_impl.dart
     │       ├── bloc/            # -> todo_bloc.dart, todo_event.dart, todo_state.dart
     │       ├── screens/         # -> todo_screen.dart, todo_screen_detail.dart
     │       ├── shared/          # -> format.dart
-    │       └── widgets/         # -> todo_list_item.dart, add_todo_fab.dart
+    │       └── widgets/         # -> add_todo_fab.dart, todo_list_item.dart
     └── settings/
-        ├── domain/              # -> user_preferences.dart + repository contract
+        ├── domain/              # -> user_preferences.dart, repositories, use_cases
         ├── data/                # -> Isar singleton model (id=0), mapper, repository
-        └── presentation/        # -> bloc/settings_bloc.dart, settings_event.dart, settings_state.dart
+        └── presentation/        # -> bloc/settings_bloc.dart, screens/settings_screen.dart
 ```
 
 ---
@@ -246,7 +245,29 @@ flutter test
 
 - **BLoC Tests (Unit)**: Validate loading / success / failure states, intercept event handling, confirm stream subscription cancellation, and verify direct reactive I/O operations. Powered by `bloc_test` and `mocktail`.
 - **Widget Tests (UI)**: Dedicated, simulated resources using `async*` events are injected into the widgets to faithfully replicate the database's delay cycle (fixing potential `pumpAndSettle` pitfalls).
-- **Golden Tests**: Verifies UI components pixel-by-pixel for Todo empty/populated states and the Settings screen, freezing viewport size, theme-related inputs, and deterministic fixture data.
+## 📋 New Project Setup & Renaming Checklist
+
+When using this template for a new application:
+
+1. **Rename the package**:
+   - `pubspec.yaml`: update `name:` and `description:`
+   - Search & replace `flutter_bloc_boilerplate` imports across `lib/` and `test/`
+2. **Configure Application IDs**:
+   - Android (`android/app/build.gradle.kts`): update `namespace` and `applicationId`
+   - iOS (`ios/Runner.xcodeproj/project.pbxproj`): update `PRODUCT_BUNDLE_IDENTIFIER` for Release, Debug, Profile
+   - App display name: `ios/Runner/Info.plist` (`CFBundleDisplayName`) & `android/app/src/main/AndroidManifest.xml`
+3. **Regenerate Assets & DI**:
+   ```bash
+   flutter pub get
+   flutter gen-l10n
+   dart run build_runner build
+   dart run flutter_launcher_icons
+   dart run flutter_native_splash:create
+   ```
+4. **Verify**:
+   ```bash
+   ./scripts/before_push.sh
+   ```
 
 ## 🗺️ Roadmap
 

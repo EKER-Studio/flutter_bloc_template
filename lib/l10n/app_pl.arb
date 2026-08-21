@@ -1,3 +1,26 @@
 {
-  "appTitle": "Zadania"
+  "@@locale": "pl",
+  "appTitle": "Zadania",
+  "settings": "Ustawienia",
+  "theme": "Motyw",
+  "themeSystem": "Domyślny systemowy",
+  "themeLight": "Jasny",
+  "themeDark": "Ciemny",
+  "notifications": "Powiadomienia",
+  "add": "Dodaj",
+  "save": "Zapisz",
+  "cancel": "Anuluj",
+  "delete": "Usuń",
+  "undo": "Cofnij",
+  "retry": "Ponów",
+  "noTodos": "Brak zadań",
+  "noTodosDescription": "Dodaj nowe zadanie za pomocą przycisku poniżej",
+  "todoDeleted": "Usunięto \"{title}\"",
+  "@todoDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  }
 }
