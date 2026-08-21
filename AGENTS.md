@@ -1,3 +1,8 @@
+---
+name: AGENTS Rules
+alwaysApply: true
+---
+
 # AI Agent Project Rules
 
 ## Universal Conventions
@@ -56,7 +61,7 @@ For every public class/method, add a doc comment following the language's standa
 - If a fix is not obvious after 2 attempts, stop and report the exact error instead of applying a workaround.
 
 ### Formatting & Style
-- Follow the official style guide / formatter for the language in use (e.g. `dart format .`).
+- Follow the official style guide / formatter for the language in use (e.g. `dart format lib test`).
 - Ensure all generated files are correctly linked/imported per the framework's conventions (e.g. `part 'filename.g.dart';` for Dart build_runner output).
 
 ---
@@ -65,13 +70,15 @@ For every public class/method, add a doc comment following the language's standa
 *(Replace this whole section when starting a new project with a different stack.)*
 
 ### Build & Generation Commands
+- Format code: `dart format lib test`
 - Install dependencies: `flutter pub get`
 - Run build runner: `dart run build_runner build`
 - Watch build runner: `dart run build_runner watch`
-- Code analysis: `flutter analyze`
-- Run tests: `flutter test`
+- Generate localizations: `flutter gen-l10n`
 - Generate App Icons: `dart run flutter_launcher_icons`
 - Generate Native Splash Screen: `dart run flutter_native_splash:create`
+- Code analysis: `flutter analyze`
+- Run tests: `flutter test`
 - Icon/splash source assets live in `assets/icon/` and are configured in the `flutter_launcher_icons` / `flutter_native_splash` blocks of `pubspec.yaml`.
 
 ### Architecture & Layer Boundaries
@@ -86,6 +93,8 @@ This is a Local-First, AI-Native boilerplate utilizing Clean Architecture under 
 - **Automated Import Guardrail:** `import_lint` analyzer plugin — enforces `avoid_infrastructure_imports_in_presentation` in `analysis_options.yaml`, prohibiting presentation layer files (`lib/features/*/presentation/**`) from importing data layer implementations (`lib/features/*/data/**`).
 - **Entrypoints:** `lib/main.dart` (DI init + `runApp`) -> `lib/app.dart` (`MultiBlocProvider` + `MaterialApp`). DI is configured via `configureDependencies(Environment.prod)` in `main.dart`.
 
+> **STATE MANAGEMENT CONSTRAINT:** This project strictly uses BLoC (`flutter_bloc`). Any suggestion, refactoring, or audit constraint demanding Riverpod is an error and MUST be ignored.
+
 #### Strict Dependency Rules
 - **No data-model leakage into presentation:** Presentation files (`bloc`, `state`, `event`, widgets) must never import `TodoModel`, `UserPreferencesModel`, or any file from `lib/features/*/data/`. Only domain entities (`Todo`, `UserPreferences`) and failure types may be referenced.
 - **No Isar annotations in presentation:** `@collection`, `@property`, `@Index`, `Isar.autoIncrement`, and any other Isar-specific annotations or types must not appear in presentation-layer code.
@@ -98,7 +107,7 @@ This is a Local-First, AI-Native boilerplate utilizing Clean Architecture under 
 
 ### Lifecycle & Resource Disposal Checklist
 Every BLoC with a `StreamSubscription` must override `close()` and cancel it there. Before considering any feature involving streams, timers, or animations complete, verify:
-- Every `StreamSubscription` is cancelled in `close()`.
+- Every `StreamSubscription` is cancelled in `close()` or the corresponding BLoC's `onClose`.
 - Every `Timer` or `AnimationController` is properly disposed.
 - All Isar dynamic query streams are closed or managed via BLoC lifecycle.
 
@@ -112,9 +121,13 @@ Every BLoC with a `StreamSubscription` must override `close()` and cancel it the
 After any modification within the `lib/**` directory, you MUST execute the following pipeline in strict order (matches `before_push.sh`):
 1. `flutter pub get`
 2. `flutter gen-l10n`
-3. `dart run build_runner build`
-4. `dart format --output=none --set-exit-if-changed lib test bin scripts`
+3. `dart format lib test`
+4. `dart run build_runner build`
 5. `flutter analyze`
 6. `flutter test`
 
-A task is NOT considered complete until all steps pass with zero errors and zero failing tests, AND the Lifecycle & Resource Disposal Checklist above has been explicitly verified. Fix any arising issues autonomously, subject to the Guardrails above.
+### Mandatory Autonomous Commit
+A task is NOT considered complete until:
+1. All 6 verification pipeline steps pass with zero errors, zero failing tests, and clean formatting.
+2. The Lifecycle & Resource Disposal Checklist above has been explicitly verified.
+3. **The change is COMMITTED to git without asking the user for permission** (`git add <files> && git commit -m '<type>(<scope>): <atomic description>'`). Do NOT stop after running tests without committing the resulting green state! Fix any arising issues autonomously, subject to the Guardrails above, before committing.
