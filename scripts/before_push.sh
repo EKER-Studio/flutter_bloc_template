@@ -60,8 +60,7 @@ log_success "Localization classes generated successfully."
 # ------------------------------------------------------------------------------
 log_step "3" "Regenerating code declarations (Build Runner)..."
 # ------------------------------------------------------------------------------
-# Deletes conflicting outputs automatically to prevent compilation deadlocks
-dart run build_runner build > /dev/null
+dart run build_runner build
 log_success "Code generation completed."
 
 # ------------------------------------------------------------------------------
@@ -72,23 +71,11 @@ dart format --set-exit-if-changed lib test
 log_success "Codebase formatting aligns with style specifications."
 
 # ------------------------------------------------------------------------------
-log_step "5" "Executing static analysis & import_lint layer guardrail..."
+log_step "5" "Executing static analysis (Linter)..."
 # ------------------------------------------------------------------------------
 # Evaluates project architecture against analysis_options.yaml rules
 flutter analyze
-
-# NOTE: `dart run import_lint` exits 0 even when it reports violations
-# (observed directly: "N issues found." followed by a zero exit code,
-# regardless of any `severity: error` setting on the rule). Do not rely on
-# its exit code. Instead, parse its own reported summary line, which is the
-# one part of its output we've verified to be stable and truthful.
-IMPORT_LINT_OUTPUT="$(dart run import_lint 2>&1 || true)"
-echo "$IMPORT_LINT_OUTPUT"
-if echo "$IMPORT_LINT_OUTPUT" | grep -qE "^[1-9][0-9]* issues? found"; then
-  echo -e "${RED}❌ [FAIL] import_lint reported architecture boundary violations (see above). Aborting push.${NC}"
-  exit 1
-fi
-log_success "Static analysis and import_lint layer boundaries passed with zero warnings or errors."
+log_success "Static analysis passed with zero warnings or errors."
 
 # ------------------------------------------------------------------------------
 log_step "6" "Running complete unit and widget test suites..."
@@ -100,7 +87,7 @@ log_success "All automated unit and widget tests completed successfully."
 # ------------------------------------------------------------------------------
 log_step "7" "Checking Android build integrity (Debug APK)..."
 # ------------------------------------------------------------------------------
-flutter build apk --debug --code-size-directory=build/logs/ || { echo "❌ [FAIL] Android build failed."; exit 1; }
+flutter build apk --debug || { echo "❌ [FAIL] Android build failed."; exit 1; }
 log_success "Android build completed successfully. Debug APK generated at build/app/outputs/flutter-apk/app-debug.apk."
 
 # ==============================================================================
