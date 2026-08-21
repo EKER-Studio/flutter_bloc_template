@@ -35,6 +35,7 @@ void main() {
     registerFallbackValue(const TodoToggled(1));
     registerFallbackValue(const TodoAdded(''));
     registerFallbackValue(TodoDeleted(dummyTodo));
+    registerFallbackValue(TodoRestored(dummyTodo));
   });
 
   late MockTodoBloc mockTodoBloc;
@@ -192,6 +193,32 @@ void main() {
         ),
       ).called(1);
       expect(find.text('Deleted "Test Todo"'), findsOneWidget);
+    });
+
+    testWidgets('adds TodoRestored event when Undo is tapped in SnackBar', (
+      tester,
+    ) async {
+      final todo = Todo(
+        id: 1,
+        title: 'Test Todo',
+        isCompleted: false,
+        createdAt: DateTime.now(),
+      );
+      when(() => mockTodoBloc.state).thenReturn(TodoLoadSuccess(todos: [todo]));
+
+      await tester.pumpWidget(buildSubject());
+
+      await tester.drag(find.byType(Dismissible), const Offset(-500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Undo'));
+      await tester.pump();
+
+      verify(
+        () => mockTodoBloc.add(
+          any(that: isA<TodoRestored>().having((e) => e.todo.id, 'todo.id', 1)),
+        ),
+      ).called(1);
     });
 
     testWidgets('shows SnackBar when state changes to TodoLoadFailure', (

@@ -33,8 +33,8 @@ void main() {
       );
 
       await tester.pumpWidget(
-        BlocProvider.value(
-          value: TodoBloc(repository)..add(const WatchTodos()),
+        BlocProvider<TodoBloc>.value(
+          value: TodoBloc.fromRepository(repository)..add(const WatchTodos()),
           child: const MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,

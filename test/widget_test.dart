@@ -21,11 +21,13 @@ void main() {
         providers: [
           BlocProvider<TodoBloc>(
             create: (_) =>
-                TodoBloc(FakeTodoRepository())..add(const WatchTodos()),
+                TodoBloc.fromRepository(FakeTodoRepository())
+                  ..add(const WatchTodos()),
           ),
           BlocProvider<SettingsBloc>(
             create: (_) =>
-                SettingsBloc(prefsRepo)..add(const SettingsWatchStarted()),
+                SettingsBloc.fromRepository(prefsRepo)
+                  ..add(const SettingsWatchStarted()),
           ),
         ],
         child: const MaterialApp(

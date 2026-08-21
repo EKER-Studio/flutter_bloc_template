@@ -28,7 +28,8 @@ void main() {
       ),
     );
     addTearDown(fakeRepo.dispose);
-    final bloc = SettingsBloc(fakeRepo)..add(const SettingsWatchStarted());
+    final bloc = SettingsBloc.fromRepository(fakeRepo)
+      ..add(const SettingsWatchStarted());
 
     await tester.pumpWidget(
       BlocProvider.value(

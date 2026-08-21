@@ -91,7 +91,15 @@ class TodoScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context)
                       ..hideCurrentSnackBar()
                       ..showSnackBar(
-                        SnackBar(content: Text('Deleted "${todo.title}"')),
+                        SnackBar(
+                          content: Text('Deleted "${todo.title}"'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              context.read<TodoBloc>().add(TodoRestored(todo));
+                            },
+                          ),
+                        ),
                       );
                   },
                 );

@@ -35,11 +35,12 @@ void main() {
           ),
           BlocProvider<TodoBloc>(
             create: (_) =>
-                TodoBloc(FakeTodoRepository())..add(const WatchTodos()),
+                TodoBloc.fromRepository(FakeTodoRepository())
+                  ..add(const WatchTodos()),
           ),
           BlocProvider<SettingsBloc>(
             create: (_) =>
-                SettingsBloc(FakeUserPreferencesRepository())
+                SettingsBloc.fromRepository(FakeUserPreferencesRepository())
                   ..add(const SettingsWatchStarted()),
           ),
         ],

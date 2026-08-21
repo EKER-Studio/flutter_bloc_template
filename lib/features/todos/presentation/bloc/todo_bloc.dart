@@ -6,29 +6,56 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/todo.dart';
 import '../../domain/repositories/todo_repository.dart';
+import '../../domain/use_cases/add_todo_use_case.dart';
+import '../../domain/use_cases/delete_todo_use_case.dart';
+import '../../domain/use_cases/restore_todo_use_case.dart';
+import '../../domain/use_cases/toggle_todo_use_case.dart';
+import '../../domain/use_cases/watch_todos_use_case.dart';
 import 'todo_event.dart';
 import 'todo_state.dart';
 
-/// BLoC managing the todo list state.
+/// BLoC managing the todo list state via clean architecture use cases.
 @injectable
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  /// Creates a bloc backed by the given repository.
-  TodoBloc(this._repository) : super(const TodoInitial()) {
+  /// Creates a bloc backed by the domain use cases.
+  TodoBloc(
+    this._watchTodos,
+    this._addTodo,
+    this._toggleTodo,
+    this._deleteTodo,
+    this._restoreTodo,
+  ) : super(const TodoInitial()) {
     on<WatchTodos>(_onWatchTodos);
     on<TodoAdded>(_onTodoAdded);
     on<TodoToggled>(_onTodoToggled);
     on<TodoDeleted>(_onTodoDeleted);
+    on<TodoRestored>(_onTodoRestored);
     on<TodoWatchFailed>(_onTodoWatchFailed);
     on<TodosUpdated>(_onTodosUpdated);
   }
 
-  final TodoRepository _repository;
+  /// Convenience constructor wrapping a repository directly (e.g. for testing).
+  TodoBloc.fromRepository(TodoRepository repository)
+    : this(
+        WatchTodosUseCase(repository),
+        AddTodoUseCase(repository),
+        ToggleTodoUseCase(repository),
+        DeleteTodoUseCase(repository),
+        RestoreTodoUseCase(repository),
+      );
+
+  final WatchTodosUseCase _watchTodos;
+  final AddTodoUseCase _addTodo;
+  final ToggleTodoUseCase _toggleTodo;
+  final DeleteTodoUseCase _deleteTodo;
+  final RestoreTodoUseCase _restoreTodo;
+
   StreamSubscription<List<Todo>>? _todosSubscription;
 
   void _onWatchTodos(WatchTodos event, Emitter<TodoState> emit) {
     emit(const TodoLoadInProgress());
     _todosSubscription?.cancel();
-    _todosSubscription = _repository.watchAll().listen(
+    _todosSubscription = _watchTodos().listen(
       (todos) => add(TodosUpdated(todos)),
       onError: (Object error) {
         final failure = error is Failure
@@ -49,7 +76,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   Future<void> _onTodoAdded(TodoAdded event, Emitter<TodoState> emit) async {
     try {
-      final result = await _repository.add(title: event.title);
+      final result = await _addTodo(title: event.title);
       if (result.$2 != null) {
         emit(TodoLoadFailure(result.$2!));
       }
@@ -63,7 +90,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     try {
-      final result = await _repository.toggleCompleted(id: event.id);
+      final result = await _toggleTodo(id: event.id);
       if (result.$2 != null) {
         emit(TodoLoadFailure(result.$2!));
       }
@@ -77,12 +104,26 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     Emitter<TodoState> emit,
   ) async {
     try {
-      final result = await _repository.delete(id: event.todo.id);
+      final result = await _deleteTodo(id: event.todo.id);
       if (result.$2 != null) {
         emit(TodoLoadFailure(result.$2!));
       }
     } catch (e) {
       emit(TodoLoadFailure(DatabaseFailure('Delete failed: ${e.toString()}')));
+    }
+  }
+
+  Future<void> _onTodoRestored(
+    TodoRestored event,
+    Emitter<TodoState> emit,
+  ) async {
+    try {
+      final result = await _restoreTodo(event.todo);
+      if (result.$2 != null) {
+        emit(TodoLoadFailure(result.$2!));
+      }
+    } catch (e) {
+      emit(TodoLoadFailure(DatabaseFailure('Restore failed: ${e.toString()}')));
     }
   }
 

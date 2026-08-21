@@ -129,14 +129,14 @@ void main() {
   group('SettingsBloc', () {
     blocTest<SettingsBloc, SettingsState>(
       'watch started emits LoadInProgress then LoadSuccess with defaults',
-      build: () => SettingsBloc(repository),
+      build: () => SettingsBloc.fromRepository(repository),
       act: (bloc) => bloc.add(const SettingsWatchStarted()),
       expect: () => [isA<SettingsLoadInProgress>(), isA<SettingsLoadSuccess>()],
     );
 
     blocTest<SettingsBloc, SettingsState>(
       'SettingsThemeModeUpdated: watch stream emits updated theme',
-      build: () => SettingsBloc(repository),
+      build: () => SettingsBloc.fromRepository(repository),
       act: (bloc) async {
         bloc.add(const SettingsWatchStarted());
         await waitForState(bloc, (s) => s is SettingsLoadSuccess);
@@ -160,7 +160,7 @@ void main() {
 
     blocTest<SettingsBloc, SettingsState>(
       'SettingsNotificationsUpdated: emits updated preference immediately',
-      build: () => SettingsBloc(repository),
+      build: () => SettingsBloc.fromRepository(repository),
       act: (bloc) async {
         bloc.add(const SettingsWatchStarted());
         await waitForState(bloc, (s) => s is SettingsLoadSuccess);
@@ -184,7 +184,7 @@ void main() {
 
     blocTest<SettingsBloc, SettingsState>(
       'SettingsNotificationsUpdated: emits success without prior watch snapshot',
-      build: () => SettingsBloc(_SilentRepository()),
+      build: () => SettingsBloc.fromRepository(_SilentRepository()),
       act: (bloc) async {
         bloc.add(const SettingsWatchStarted());
         await Future<void>.delayed(Duration.zero);
@@ -207,7 +207,7 @@ void main() {
           repository,
           const DatabaseFailure('write error'),
         );
-        return SettingsBloc(failingRepo);
+        return SettingsBloc.fromRepository(failingRepo);
       },
       act: (bloc) async {
         bloc.add(const SettingsWatchStarted());
@@ -233,14 +233,14 @@ void main() {
 
     blocTest<SettingsBloc, SettingsState>(
       'watch stream error without snapshot emits SettingsLoadFailure',
-      build: () => SettingsBloc(_ErrorStreamRepository()),
+      build: () => SettingsBloc.fromRepository(_ErrorStreamRepository()),
       act: (bloc) => bloc.add(const SettingsWatchStarted()),
       expect: () => [isA<SettingsLoadInProgress>(), isA<SettingsLoadFailure>()],
     );
 
     blocTest<SettingsBloc, SettingsState>(
       'close() cancels subscription and does not emit after',
-      build: () => SettingsBloc(repository),
+      build: () => SettingsBloc.fromRepository(repository),
       act: (bloc) async {
         bloc.add(const SettingsWatchStarted());
         // Let the watch stream microtask emit the initial load.

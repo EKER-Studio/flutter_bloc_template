@@ -40,6 +40,15 @@ class TodoDeleted extends TodoEvent {
   final Todo todo;
 }
 
+/// Restores a previously deleted todo.
+class TodoRestored extends TodoEvent {
+  /// Creates a [TodoRestored] event for the given [todo].
+  const TodoRestored(this.todo);
+
+  /// The todo to restore.
+  final Todo todo;
+}
+
 /// Internal event emitted by the watch stream subscription when the repository
 /// reports an updated todo list. Not intended to be dispatched from the UI.
 class TodosUpdated extends TodoEvent {

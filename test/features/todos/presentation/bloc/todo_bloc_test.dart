@@ -167,12 +167,12 @@ void main() {
     });
 
     test('initial state is TodoInitial', () {
-      expect(TodoBloc(repository).state, const TodoInitial());
+      expect(TodoBloc.fromRepository(repository).state, const TodoInitial());
     });
 
     blocTest<TodoBloc, TodoState>(
       'WatchTodos emits LoadInProgress then LoadSuccess',
-      build: () => TodoBloc(repository),
+      build: () => TodoBloc.fromRepository(repository),
       act: (bloc) => bloc.add(const WatchTodos()),
       expect: () => [const TodoLoadInProgress(), isA<TodoLoadSuccess>()],
     );
@@ -180,7 +180,7 @@ void main() {
     group('TodoAdded', () {
       blocTest<TodoBloc, TodoState>(
         'adds a new todo to the list',
-        build: () => TodoBloc(repository),
+        build: () => TodoBloc.fromRepository(repository),
         act: (bloc) async {
           bloc.add(const WatchTodos());
           // Let the initial stream yield settle before mutating.
@@ -209,7 +209,7 @@ void main() {
         build: () {
           final repo = FakeTodoRepository(initialTodos: [_created]);
           repos.add(repo);
-          return TodoBloc(repo);
+          return TodoBloc.fromRepository(repo);
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -238,7 +238,7 @@ void main() {
         build: () {
           final repo = FakeTodoRepository(initialTodos: [_created]);
           repos.add(repo);
-          return TodoBloc(repo);
+          return TodoBloc.fromRepository(repo);
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -265,7 +265,7 @@ void main() {
         build: () {
           final repo = FakeTodoRepository(initialTodos: [_created, _second]);
           repos.add(repo);
-          return TodoBloc(repo);
+          return TodoBloc.fromRepository(repo);
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -299,7 +299,9 @@ void main() {
         build: () {
           final fakeRepo = FakeTodoRepository(initialTodos: [_created]);
           repos.add(fakeRepo);
-          return TodoBloc(_FailingOnceTodoRepository(fakeRepo, 'delete'));
+          return TodoBloc.fromRepository(
+            _FailingOnceTodoRepository(fakeRepo, 'delete'),
+          );
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -318,13 +320,69 @@ void main() {
       );
     });
 
+    group('TodoRestored', () {
+      blocTest<TodoBloc, TodoState>(
+        'restores a deleted todo',
+        build: () {
+          final repo = FakeTodoRepository();
+          repos.add(repo);
+          return TodoBloc.fromRepository(repo);
+        },
+        act: (bloc) async {
+          bloc.add(const WatchTodos());
+          await Future<void>.delayed(Duration.zero);
+          bloc.add(TodoRestored(_created));
+        },
+        expect: () => [
+          const TodoLoadInProgress(),
+          isA<TodoLoadSuccess>().having(
+            (s) => s.todos.length,
+            'initial count',
+            0,
+          ),
+          isA<TodoLoadSuccess>().having(
+            (s) => s.todos.length,
+            'after restore count',
+            1,
+          ),
+        ],
+      );
+
+      blocTest<TodoBloc, TodoState>(
+        'restore failure emits TodoLoadFailure',
+        build: () {
+          final fakeRepo = FakeTodoRepository();
+          repos.add(fakeRepo);
+          return TodoBloc.fromRepository(
+            _FailingOnceTodoRepository(fakeRepo, 'restore'),
+          );
+        },
+        act: (bloc) async {
+          bloc.add(const WatchTodos());
+          await Future<void>.delayed(Duration.zero);
+          bloc.add(TodoRestored(_created));
+        },
+        expect: () => [
+          const TodoLoadInProgress(),
+          isA<TodoLoadSuccess>(),
+          isA<TodoLoadFailure>().having(
+            (s) => s.failure.message,
+            'message',
+            contains('restore'),
+          ),
+        ],
+      );
+    });
+
     group('Error handling', () {
       blocTest<TodoBloc, TodoState>(
         'add failure emits TodoLoadFailure',
         build: () {
           final fakeRepo = FakeTodoRepository();
           repos.add(fakeRepo);
-          return TodoBloc(_FailingOnceTodoRepository(fakeRepo, 'add'));
+          return TodoBloc.fromRepository(
+            _FailingOnceTodoRepository(fakeRepo, 'add'),
+          );
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -347,7 +405,9 @@ void main() {
         build: () {
           final fakeRepo = FakeTodoRepository(initialTodos: [_created]);
           repos.add(fakeRepo);
-          return TodoBloc(_FailingOnceTodoRepository(fakeRepo, 'toggle'));
+          return TodoBloc.fromRepository(
+            _FailingOnceTodoRepository(fakeRepo, 'toggle'),
+          );
         },
         act: (bloc) async {
           bloc.add(const WatchTodos());
@@ -370,7 +430,7 @@ void main() {
       blocTest<TodoBloc, TodoState>(
         'watch stream error emits TodoLoadFailure instead of throwing '
         '(regression test: emit-after-handler-completed)',
-        build: () => TodoBloc(erroringRepo),
+        build: () => TodoBloc.fromRepository(erroringRepo),
         act: (bloc) async {
           bloc.add(const WatchTodos());
           await Future<void>.delayed(Duration.zero);
@@ -395,7 +455,7 @@ void main() {
 
     blocTest<TodoBloc, TodoState>(
       'close() cancels subscription and does not emit after',
-      build: () => TodoBloc(repository),
+      build: () => TodoBloc.fromRepository(repository),
       act: (bloc) async {
         bloc.add(const WatchTodos());
         await Future<void>.delayed(Duration.zero);
