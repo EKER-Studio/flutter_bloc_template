@@ -22,6 +22,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appName"] = "Flutter Blueprint"
     }
 
     buildTypes {
@@ -29,8 +30,10 @@ android {
             // Unique application ID for debug builds so they can coexist with the release
             // version installed from the store on the same device.
             applicationIdSuffix = ".dev"
+            manifestPlaceholders["appName"] = "Flutter Blueprint (Dev)"
         }
         release {
+            manifestPlaceholders["appName"] = "Flutter Blueprint"
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")

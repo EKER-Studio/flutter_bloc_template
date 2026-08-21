@@ -33,4 +33,8 @@ class AppConfig {
     AppEnvironment.dev => 'dev',
     AppEnvironment.prod => 'prod',
   };
+
+  /// The user-facing application name tailored to the active environment.
+  static String get appName =>
+      isDev ? 'Flutter Blueprint (Dev)' : 'Flutter Blueprint';
 }
