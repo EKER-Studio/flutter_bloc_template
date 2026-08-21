@@ -9,7 +9,6 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:isar_community/isar.dart' as _i214;
@@ -24,11 +23,7 @@ import '../../features/todos/data/repositories/todo_repository_impl.dart'
 import '../../features/todos/domain/repositories/todo_repository.dart' as _i408;
 import '../../features/todos/presentation/bloc/todo_bloc.dart' as _i869;
 import '../database/database_module.dart' as _i215;
-import '../network/network_module.dart' as _i200;
 import '../presentation/bloc/app_theme_bloc.dart' as _i464;
-
-const String _dev = 'dev';
-const String _prod = 'prod';
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -38,17 +33,12 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final databaseModule = _$DatabaseModule();
-    final networkModule = _$NetworkModule();
     await gh.singletonAsync<_i214.Isar>(
       () => databaseModule.isar,
       preResolve: true,
     );
     gh.lazySingleton<_i1060.UserPreferencesRepository>(
       () => _i969.UserPreferencesRepositoryImpl(gh<_i214.Isar>()),
-    );
-    gh.lazySingleton<_i361.Dio>(
-      () => networkModule.dioDev,
-      registerFor: {_dev},
     );
     gh.lazySingleton<_i408.TodoRepository>(
       () => _i888.TodoRepositoryImpl(gh<_i214.Isar>()),
@@ -59,10 +49,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i585.SettingsBloc>(
       () => _i585.SettingsBloc(gh<_i1060.UserPreferencesRepository>()),
     );
-    gh.lazySingleton<_i361.Dio>(
-      () => networkModule.dioProd,
-      registerFor: {_prod},
-    );
     gh.factory<_i869.TodoBloc>(
       () => _i869.TodoBloc(gh<_i408.TodoRepository>()),
     );
@@ -71,5 +57,3 @@ extension GetItInjectableX on _i174.GetIt {
 }
 
 class _$DatabaseModule extends _i215.DatabaseModule {}
-
-class _$NetworkModule extends _i200.NetworkModule {}
