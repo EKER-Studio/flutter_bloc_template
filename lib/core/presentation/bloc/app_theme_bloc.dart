@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
@@ -9,10 +9,10 @@ import 'package:flutter_bloc_boilerplate/features/settings/domain/repositories/u
 import 'app_theme_event.dart';
 import 'app_theme_state.dart';
 
-/// BLoC that follows the repository-backed theme mode stream and exposes the
-/// runtime theme state used by the material app.
+/// BLoC that follows the repository-backed theme mode stream, exposes the
+/// runtime theme state used by the material app, and persists theme state via [HydratedBloc].
 @lazySingleton
-class AppThemeBloc extends Bloc<AppThemeEvent, AppThemeState> {
+class AppThemeBloc extends HydratedBloc<AppThemeEvent, AppThemeState> {
   /// Creates a bloc backed by the given repository.
   AppThemeBloc(this._repository) : super(const AppThemeState.system()) {
     on<AppThemeWatchStarted>(_onWatchStarted);
@@ -35,6 +35,13 @@ class AppThemeBloc extends Bloc<AppThemeEvent, AppThemeState> {
   void _onModeChanged(AppThemeModeChanged event, Emitter<AppThemeState> emit) {
     emit(AppThemeState(event.mode));
   }
+
+  @override
+  AppThemeState? fromJson(Map<String, dynamic> json) =>
+      AppThemeState.fromJson(json);
+
+  @override
+  Map<String, dynamic>? toJson(AppThemeState state) => state.toJson();
 
   @override
   Future<void> close() {

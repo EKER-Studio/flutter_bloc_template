@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
 import 'core/di/injection.dart';
 
 /// Initializes dependency injection (including the pre-resolved Isar
-/// database) and launches the app.
+/// database), HydratedBloc storage, and launches the app.
 ///
 /// Wrapped in [runZonedGuarded] together with [FlutterError.onError] so that
 /// uncaught errors — both inside and outside the Flutter widget tree — are
@@ -19,6 +22,14 @@ Future<void> main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+
+      HydratedBloc.storage = await HydratedStorage.build(
+        storageDirectory: kIsWeb
+            ? HydratedStorageDirectory.web
+            : HydratedStorageDirectory(
+                (await getApplicationDocumentsDirectory()).path,
+              ),
+      );
 
       FlutterError.onError = (FlutterErrorDetails details) {
         FlutterError.presentError(details);

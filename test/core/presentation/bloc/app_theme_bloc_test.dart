@@ -10,6 +10,8 @@ import 'package:flutter_bloc_boilerplate/core/presentation/bloc/app_theme_state.
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/repositories/user_preferences_repository.dart';
 
+import '../../../helpers/mock_hydrated_storage.dart';
+
 class _TestThemeRepository implements UserPreferencesRepository {
   _TestThemeRepository(this._themeModeStream);
 
@@ -36,6 +38,10 @@ class _TestThemeRepository implements UserPreferencesRepository {
 }
 
 void main() {
+  setUp(() {
+    initMockHydratedStorage();
+  });
+
   group('AppThemeState', () {
     group('toJson / fromJson round-trip', () {
       test('light mode round-trips correctly', () {
