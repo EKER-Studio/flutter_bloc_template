@@ -25,6 +25,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Unique application ID for debug builds so they can coexist with the release
+            // version installed from the store on the same device.
+            applicationIdSuffix = ".dev"
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
