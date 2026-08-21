@@ -6,16 +6,16 @@ import 'core/presentation/bloc/app_theme_bloc.dart';
 import 'core/presentation/bloc/app_theme_event.dart';
 import 'core/presentation/bloc/app_theme_state.dart';
 import 'core/presentation/theme/app_theme.dart';
+import 'core/router/app_router.dart';
 import 'features/settings/domain/entities/user_preferences.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 import 'features/settings/presentation/bloc/settings_event.dart';
 import 'features/todos/presentation/bloc/todo_bloc.dart';
 import 'features/todos/presentation/bloc/todo_event.dart';
-import 'features/todos/presentation/screens/todo_screen.dart';
 import 'l10n/app_localizations.dart';
 
 /// Root widget that configures BLoCs, applies theme preferences, and hosts the
-/// home screen.
+/// router configuration.
 class App extends StatelessWidget {
   /// Creates an [App].
   const App({super.key});
@@ -48,14 +48,14 @@ class _AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppThemeBloc, AppThemeState>(
       builder: (context, state) {
-        return MaterialApp(
+        return MaterialApp.router(
           title: 'Flutter BLoC Boilerplate',
+          routerConfig: appRouter,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: _mapThemeMode(state.mode),
-          home: const TodoScreen(),
         );
       },
     );

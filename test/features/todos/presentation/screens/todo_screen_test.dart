@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:flutter_bloc_boilerplate/core/errors/failure.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_bloc_boilerplate/features/todos/presentation/screens/tod
 import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_event.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/presentation/bloc/settings_state.dart';
+import 'package:flutter_bloc_boilerplate/features/settings/presentation/screens/settings_screen.dart';
 import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_preferences.dart';
 
 class MockTodoBloc extends MockBloc<TodoEvent, TodoState> implements TodoBloc {}
@@ -50,15 +52,31 @@ void main() {
   });
 
   Widget buildSubject() {
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const TodoScreen(),
+          routes: [
+            GoRoute(
+              path: 'settings',
+              builder: (context, state) => const SettingsScreen(),
+            ),
+          ],
+        ),
+      ],
+    );
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<TodoBloc>.value(value: mockTodoBloc),
         BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
+        routerConfig: router,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const TodoScreen(),
       ),
     );
   }
