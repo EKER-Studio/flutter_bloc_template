@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/failure.dart';
+import '../../../../core/presentation/widgets/app_empty_view.dart';
+import '../../../../core/presentation/widgets/app_error_view.dart';
+import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/todo.dart';
 import '../bloc/todo_bloc.dart';
@@ -56,7 +59,7 @@ class TodoScreen extends StatelessWidget {
   Scaffold _buildLoading(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context).appTitle)),
-      body: const Center(child: CircularProgressIndicator()),
+      body: const AppLoadingIndicator(),
     );
   }
 
@@ -75,7 +78,10 @@ class TodoScreen extends StatelessWidget {
         ],
       ),
       body: todos.isEmpty
-          ? const Center(child: Text('No todos yet'))
+          ? const AppEmptyView(
+              title: 'No todos yet',
+              description: 'Add a new task using the button below',
+            )
           : ListView.builder(
               itemCount: todos.length,
               itemBuilder: (context, index) {
@@ -114,18 +120,9 @@ class TodoScreen extends StatelessWidget {
   Scaffold _buildError(BuildContext context, String message) {
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context).appTitle)),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Error: $message'),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () => context.read<TodoBloc>().add(const WatchTodos()),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
+      body: AppErrorView(
+        message: message,
+        onRetry: () => context.read<TodoBloc>().add(const WatchTodos()),
       ),
     );
   }

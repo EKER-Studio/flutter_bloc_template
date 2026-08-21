@@ -4,10 +4,10 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
+import 'core/config/app_environment.dart';
 import 'core/di/injection.dart';
 
 /// Initializes dependency injection (including the pre-resolved Isar
@@ -41,7 +41,7 @@ Future<void> main() async {
         );
       };
 
-      await configureDependencies(Environment.prod);
+      await configureDependencies(AppConfig.injectableEnv);
 
       runApp(const App());
     },
