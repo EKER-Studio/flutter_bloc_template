@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/todo.dart';
-import '../screens/todo_screen_detail.dart';
 import '../shared/format.dart';
 
 /// List item widget displaying a todo item.
@@ -39,14 +39,7 @@ class TodoListItem extends StatelessWidget {
       ),
       onDismissed: (_) => onDelete(),
       child: ListTile(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TodoDetailScreen(todoId: todo.id),
-            ),
-          );
-        },
+        onTap: () => context.push('/todo/${todo.id}'),
         leading: Semantics(
           label: todo.isCompleted
               ? 'Mark "${todo.title}" as not done'
