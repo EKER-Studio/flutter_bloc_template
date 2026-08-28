@@ -27,13 +27,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
       userPreferencesSingletonId,
     );
 
-    if (existing != null) {
-      return existing;
-    }
-
-    final model = UserPreferences.defaults().toModel();
-    await _isar.userPreferencesModels.put(model);
-    return model;
+    return existing ?? UserPreferences.defaults().toModel();
   }
 
   @override
