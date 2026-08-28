@@ -1,4 +1,12 @@
-# 🚀 Flutter Local-First Blueprint — BLoC + GetIt + Injectable + Isar Clean Architecture
+# 🚀 Flutter Local-First Blueprint — BLoC + GetIt + Injectable + Isar Clean Architecture (v1.1.0)
+
+[![Release](https://img.shields.io/badge/Release-v1.1.0-blue.svg)](CHANGELOG.md)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![State](https://img.shields.io/badge/State-BLoC_9.x-0553B1)](https://bloclibrary.dev)
+[![Database](https://img.shields.io/badge/Database-Isar_Community-00B4D8)](https://isar-community.dev)
+[![Routing](https://img.shields.io/badge/Routing-GoRouter-teal)](https://pub.dev/packages/go_router)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A production-grade reference architecture and starter blueprint for Flutter applications, engineered for offline resilience, predictable state boundaries, and lean scalability.
 
@@ -278,5 +286,9 @@ When using this template for a new application:
 - [x] Comprehensive Test Suite (Unit, Widget, and Golden Tests)
 - [x] Production-ready GitHub Actions CI/CD Pipeline
 - [x] Multi-language Localization (intl & l10n architectural blueprint)
-- [ ] Reference Network Sync Module (Edge-to-Cloud sync draft)
-- [ ] CLI Feature Template Generator for faster scaffolding
+ - [ ] Reference Network Sync Module (Edge-to-Cloud sync draft)
+ - [ ] CLI Feature Template Generator for faster scaffolding
+
+ ## 📝 Changelog
+
+ See [CHANGELOG.md](CHANGELOG.md) for release history. Current version: **v1.1.0** — [Release notes](CHANGELOG.md#110---2026-08-28).
