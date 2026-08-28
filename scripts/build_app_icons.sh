@@ -21,16 +21,16 @@ svg_to_png() {
 }
 
 # ------------------------------------------------------------
-# Sprawdzenie narzędzia
+# Tool Verification
 # ------------------------------------------------------------
 
 if ! command -v rsvg-convert >/dev/null 2>&1; then
-  echo "❌ Brak rsvg-convert. Zainstaluj librsvg."
+  echo "❌ Missing rsvg-convert. Please install librsvg."
   exit 1
 fi
 
 # ------------------------------------------------------------
-# Sprawdzenie źródeł
+# Source File Verification
 # ------------------------------------------------------------
 
 for file in \
@@ -42,15 +42,15 @@ for file in \
   splash_dark.svg
 do
   if [[ ! -f "$ICON_DIR/$file" ]]; then
-    echo "❌ Brak pliku: $ICON_DIR/$file"
+    echo "❌ Missing file: $ICON_DIR/$file"
     exit 1
   fi
 done
 
 # ------------------------------------------------------------
-# Generowanie PNG
-# Każdy PNG powstaje bezpośrednio z odpowiadającego SVG.
-# Bez colorize, flatten, resize ani dodatkowej obróbki.
+# PNG Generation
+# Each PNG is generated directly from its matching SVG.
+# No colorize, flatten, resize, or extra processing applied.
 # ------------------------------------------------------------
 
 svg_to_png app_icon            app_icon
@@ -70,4 +70,4 @@ dart run flutter_launcher_icons
 echo "→ flutter_native_splash"
 dart run flutter_native_splash:create
 
-echo "✅ Ikony i splash screen wygenerowane."
+echo "✅ App icons and splash screen generated successfully."

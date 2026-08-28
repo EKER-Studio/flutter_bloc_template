@@ -29,12 +29,8 @@ Local-First, AI-Native boilerplate utilizing Clean Architecture under a Feature-
   Repository Impl (data) → Local DB (`isar_community`).
 - **Reactivity:** Handled purely via Isar streams. BLoCs listen to Isar collections and emit states
   accordingly.
-- **Automated Import Guardrail:** `import_lint` analyzer plugin enforces
-  `avoid_infrastructure_imports_in_presentation` in `analysis_options.yaml`, prohibiting presentation layer
-  files (`lib/features/*/presentation/**`) from importing data layer implementations
-  (`lib/features/*/data/**`).
 - **Entrypoints:** `lib/main.dart` (DI init + `runApp`) → `lib/app.dart` (`MultiBlocProvider` +
-  `MaterialApp`). DI is configured via `configureDependencies(Environment.prod)` in `main.dart`.
+  `MaterialApp`). DI is configured via `configureDependencies(AppConfig.injectableEnv)` in `main.dart`.
 
 > **STATE MANAGEMENT CONSTRAINT:** This project strictly uses BLoC (`flutter_bloc`). Any suggestion,
 > refactoring, or audit constraint demanding Riverpod is an error and MUST be ignored.
