@@ -19,7 +19,7 @@ This Blueprint is built on a different conviction: **maximal architectural contr
 This application serves as a full-fledged testing ground for the implemented patterns. It includes:
 - **Full CRUD** for tasks (Todo).
 - **Todo List**: A reactive list with checkboxes and Swipe-to-delete functionality.
-- **Todo Detail Screen**: A standalone, independent view that fetches a specific resource by ID, protecting the application against memory leaks by leveraging constructor injection, explicit event-driven resource fetching, and native resource deallocation when the `BlocProvider` is popped from the widget tree.
+- **Todo Detail Screen**: A standalone view routed declaratively via GoRouter (`/todo/:id`), reactively synced with `TodoBloc` and supporting instant completion toggling and deletion with automatic route pop.
 - **Settings Module**: Implementation of a global configuration layer (`ThemeMode`) backed by an Isar database singleton collection (`id=0`), reactively bound to the root `MaterialApp` via a `BLoC`.
 - **Testability**: A comprehensive suite of unit tests (BLoC) and UI tests (Widget Tests).
 - **Visual Regression (Screenshot Testing)**: Implementation of Golden Tests to ensure pixel-perfect stability across the app UI.
@@ -168,36 +168,36 @@ classDiagram
 
 ### Reactivity and Single Source of Truth (Sequence Diagram)
 
-Passing only the `ID` from the view and subscribing to the stream via a BLoC event guarantees a **Single Source of Truth** – the database (Isar) decides what state the screen should be in at any given moment. Mappers do not handle asynchronous queries; all I/O isolation logic resides entirely in the Repository's helper method.
+Subscribing to the repository stream via a BLoC event guarantees a **Single Source of Truth** – the database (Isar) dictates what state the UI renders. Mappers do not handle asynchronous queries; all I/O isolation logic resides entirely in the Repository's implementation.
 
 ```mermaid
 sequenceDiagram
-    participant UI as TodoDetailScreen
+    participant UI as TodoScreen / TodoDetailScreen
     participant Bloc as TodoBloc
     participant Repo as TodoRepositoryImpl
     participant Mapper as TodoMapper
     participant DB as Isar Database
 
-    UI->>Bloc: WatchTodoDetail(id)
+    UI->>Bloc: WatchTodos()
     activate Bloc
-    Bloc->>Repo: watchById(id)
+    Bloc->>Repo: watchAll()
     activate Repo
-    Repo->>DB: watchObject(id, fireImmediately: true)
+    Repo->>DB: watch(fireImmediately: true)
     activate DB
-    DB-->>Repo: Emits: TodoModel (Event 1)
+    DB-->>Repo: Emits: List~TodoModel~
     deactivate DB
     
-    note right of Repo: map uses toEntity
+    note right of Repo: map uses toEntity()
     
     Repo->>Mapper: toEntity()
     activate Mapper
-    Mapper-->>Repo: Returns pure Todo entity
+    Mapper-->>Repo: Returns List~Todo~ entities
     deactivate Mapper
     
-    Repo-->>Bloc: Emits Todo (Mapped Event)
+    Repo-->>Bloc: Emits List~Todo~ (Mapped Stream)
     deactivate Repo
     
-    Bloc->>Bloc: emit(TodoLoadSuccess(todo))
+    Bloc->>Bloc: emit(TodoLoadSuccess(todos))
     Bloc-->>UI: Triggers rebuild (BlocBuilder delivers state)
     deactivate Bloc
 ```
@@ -205,8 +205,8 @@ sequenceDiagram
 ### 🧠 Key Architectural Concepts:
 
 1. **I/O Isolation Pattern**: Mappers (e.g., `TodoMapper`), following best practices, remain fully **synchronous, stateless functions (extensions)**. The mapper never executes I/O operations.
-2. **Single Source of Truth via ID**: Layers exchange only the simplest identifiers (Int/String). Every new screen, component, or dialog fetches the latest data structure independently. This eliminates the risk of passing outdated snapshots through navigation parameters.
-3. **Constructor Injection & Resource Deallocation**: BLoCs receive their repository dependencies via constructor injection (managed by GetIt/Injectable). When a screen is popped from the widget tree, the corresponding `BlocProvider` is disposed, and the BLoC's `close()` method cancels the Isar stream subscription, thereby conserving RAM and preventing memory leaks.
+2. **Single Source of Truth**: Layers exchange domain entities and identifiers. Reactive streams ensure any database mutation instantly propagates across all active screens.
+3. **Constructor Injection & Resource Deallocation**: BLoCs receive their repository dependencies via constructor injection (managed by GetIt/Injectable). BLoC lifecycle hooks ensure stream subscriptions are cleanly cancelled on `close()`.
 
 ---
 
@@ -219,7 +219,7 @@ The `injectable` library works alongside `isar_community_generator` under a shar
 flutter pub get
 
 # Generate files (.g.dart for Injectable DI graph, Isar schemas)
-dart run build_runner build
+dart run build_runner build --delete-conflicting-outputs
 
 # Run on the selected device
 flutter run
@@ -260,7 +260,7 @@ When using this template for a new application:
    ```bash
    flutter pub get
    flutter gen-l10n
-   dart run build_runner build
+   dart run build_runner build --delete-conflicting-outputs
    dart run flutter_launcher_icons
    dart run flutter_native_splash:create
    ```
@@ -275,7 +275,6 @@ When using this template for a new application:
 - [x] GetIt & Injectable compile-time dependency injection
 - [x] Isar Community database integration with reactive streams
 - [x] Strict I/O Isolation Pattern via Synchronous Mappers
-- [x] Automated Layer Isolation Guardrails (`import_lint`)
 - [x] Comprehensive Test Suite (Unit, Widget, and Golden Tests)
 - [x] Production-ready GitHub Actions CI/CD Pipeline
 - [x] Multi-language Localization (intl & l10n architectural blueprint)
