@@ -33,9 +33,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get add => 'Dodaj';
 
   @override
-  String get save => 'Zapisz';
-
-  @override
   String get cancel => 'Anuluj';
 
   @override
@@ -98,4 +95,27 @@ class AppLocalizationsPl extends AppLocalizations {
   String markAsNotDone(String title) {
     return 'Oznacz \"$title\" jako niewykonane';
   }
+
+  @override
+  String errorPrefix(String message) {
+    return 'Błąd: $message';
+  }
+
+  @override
+  String get errorNotFound => 'Ten element już nie istnieje.';
+
+  @override
+  String get errorDatabase =>
+      'Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie.';
+
+  @override
+  String get errorNetwork =>
+      'Wystąpił błąd sieci. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get errorUnauthorized => 'Twoja sesja wygasła. Zaloguj się ponownie.';
+
+  @override
+  String get errorValidation =>
+      'Niektóre pola zawierają nieprawidłowe wartości.';
 }

@@ -1,3 +1,5 @@
+import '../../l10n/app_localizations.dart';
+
 /// Base class for all domain-level failures.
 ///
 /// Subclasses represent specific categories of errors that can occur
@@ -47,20 +49,14 @@ class ValidationFailure extends Failure {
   final Map<String, String> fieldErrors;
 }
 
-/// Maps each [Failure] to text that is safe to show directly to end users.
-///
-/// [Failure.message] may contain raw exception text (useful for logs/crash
-/// reports) — this extension hides that behind a stable, friendly string per
-/// failure category.
+/// Maps each [Failure] to localized text safe to show directly to end users.
 extension FailureUserMessage on Failure {
-  /// A human-readable message safe to display in UI.
-  String get userMessage => switch (this) {
-    NotFoundFailure() => 'This item no longer exists.',
-    DatabaseFailure() =>
-      'Something went wrong while saving your data. Please try again.',
-    NetworkFailure() =>
-      'A network error occurred. Please check your connection and try again.',
-    UnauthorizedFailure() => 'Your session has expired. Please sign in again.',
-    ValidationFailure() => 'Some fields contain invalid values.',
+  /// Returns a localized user-friendly message for this failure.
+  String toUserMessage(AppLocalizations l10n) => switch (this) {
+    NotFoundFailure() => l10n.errorNotFound,
+    DatabaseFailure() => l10n.errorDatabase,
+    NetworkFailure() => l10n.errorNetwork,
+    UnauthorizedFailure() => l10n.errorUnauthorized,
+    ValidationFailure() => l10n.errorValidation,
   };
 }

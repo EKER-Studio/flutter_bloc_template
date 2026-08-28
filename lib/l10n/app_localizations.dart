@@ -146,12 +146,6 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get add;
 
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -265,6 +259,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark \"{title}\" as not done'**
   String markAsNotDone(String title);
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String errorPrefix(String message);
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This item no longer exists.'**
+  String get errorNotFound;
+
+  /// No description provided for @errorDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while saving your data. Please try again.'**
+  String get errorDatabase;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'A network error occurred. Please check your connection and try again.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorUnauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get errorUnauthorized;
+
+  /// No description provided for @errorValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Some fields contain invalid values.'**
+  String get errorValidation;
 }
 
 class _AppLocalizationsDelegate

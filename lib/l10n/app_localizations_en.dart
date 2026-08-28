@@ -33,9 +33,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
-  String get save => 'Save';
-
-  @override
   String get cancel => 'Cancel';
 
   @override
@@ -97,4 +94,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String markAsNotDone(String title) {
     return 'Mark \"$title\" as not done';
   }
+
+  @override
+  String errorPrefix(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get errorNotFound => 'This item no longer exists.';
+
+  @override
+  String get errorDatabase =>
+      'Something went wrong while saving your data. Please try again.';
+
+  @override
+  String get errorNetwork =>
+      'A network error occurred. Please check your connection and try again.';
+
+  @override
+  String get errorUnauthorized =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get errorValidation => 'Some fields contain invalid values.';
 }

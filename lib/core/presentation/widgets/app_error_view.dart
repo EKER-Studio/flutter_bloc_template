@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 /// Reusable error display widget with an optional retry action.
 class AppErrorView extends StatelessWidget {
   /// Creates an [AppErrorView].
@@ -7,7 +9,7 @@ class AppErrorView extends StatelessWidget {
     super.key,
     required this.message,
     this.onRetry,
-    this.retryLabel = 'Retry',
+    this.retryLabel,
   });
 
   /// Human-readable error message.
@@ -16,11 +18,13 @@ class AppErrorView extends StatelessWidget {
   /// Callback executed when the user taps the retry button.
   final VoidCallback? onRetry;
 
-  /// Label for the retry button. Defaults to 'Retry'.
-  final String retryLabel;
+  /// Label for the retry button. Defaults to localized 'Retry'.
+  final String? retryLabel;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final buttonLabel = retryLabel ?? l10n.retry;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -34,13 +38,13 @@ class AppErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Error: $message',
+              l10n.errorPrefix(message),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 16),
-              FilledButton(onPressed: onRetry, child: Text(retryLabel)),
+              FilledButton(onPressed: onRetry, child: Text(buttonLabel)),
             ],
           ],
         ),

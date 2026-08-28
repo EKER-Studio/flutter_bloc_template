@@ -8,7 +8,6 @@
   "themeDark": "Dark",
   "notifications": "Notifications",
   "add": "Add",
-  "save": "Save",
   "cancel": "Cancel",
   "delete": "Delete",
   "undo": "Undo",
@@ -48,5 +47,18 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorPrefix": "Error: {message}",
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNotFound": "This item no longer exists.",
+  "errorDatabase": "Something went wrong while saving your data. Please try again.",
+  "errorNetwork": "A network error occurred. Please check your connection and try again.",
+  "errorUnauthorized": "Your session has expired. Please sign in again.",
+  "errorValidation": "Some fields contain invalid values."
 }

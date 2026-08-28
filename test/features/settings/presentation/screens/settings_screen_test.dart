@@ -35,4 +35,31 @@ void main() {
 
     bloc.close();
   });
+
+  testWidgets('Settings screen renders in Polish locale', (tester) async {
+    final fakeRepo = FakeUserPreferencesRepository();
+    addTearDown(fakeRepo.dispose);
+    final bloc = SettingsBloc.fromRepository(fakeRepo)
+      ..add(const SettingsWatchStarted());
+
+    await tester.pumpWidget(
+      BlocProvider.value(
+        value: bloc,
+        child: const MaterialApp(
+          locale: Locale('pl'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SettingsScreen(),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ustawienia'), findsOneWidget);
+    expect(find.text('Domyślny systemowy'), findsOneWidget);
+    expect(find.text('Powiadomienia'), findsOneWidget);
+
+    bloc.close();
+  });
 }

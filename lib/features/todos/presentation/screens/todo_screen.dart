@@ -30,14 +30,15 @@ class TodoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocListener<TodoBloc, TodoState>(
       listenWhen: (previous, current) =>
           current is TodoLoadFailure && previous is! TodoLoadFailure,
       listener: (context, state) {
         if (state is TodoLoadFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.failure.userMessage)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.failure.toUserMessage(l10n))),
+          );
         }
       },
       child: BlocBuilder<TodoBloc, TodoState>(
@@ -48,7 +49,7 @@ class TodoScreen extends StatelessWidget {
             TodoLoadSuccess(:final todos) => _buildList(context, todos),
             TodoLoadFailure(:final failure) => _buildError(
               context,
-              failure.userMessage,
+              failure.toUserMessage(l10n),
             ),
           };
         },

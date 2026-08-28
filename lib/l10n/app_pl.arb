@@ -8,7 +8,6 @@
   "themeDark": "Ciemny",
   "notifications": "Powiadomienia",
   "add": "Dodaj",
-  "save": "Zapisz",
   "cancel": "Anuluj",
   "delete": "Usuń",
   "undo": "Cofnij",
@@ -48,5 +47,18 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorPrefix": "Błąd: {message}",
+  "@errorPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "errorNotFound": "Ten element już nie istnieje.",
+  "errorDatabase": "Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie.",
+  "errorNetwork": "Wystąpił błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
+  "errorUnauthorized": "Twoja sesja wygasła. Zaloguj się ponownie.",
+  "errorValidation": "Niektóre pola zawierają nieprawidłowe wartości."
 }

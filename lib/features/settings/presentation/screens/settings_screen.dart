@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/errors/failure.dart';
+import '../../../../core/presentation/widgets/app_error_view.dart';
 import '../../../../core/presentation/widgets/app_loading_indicator.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/user_preferences.dart';
@@ -22,9 +23,9 @@ class SettingsScreen extends StatelessWidget {
           current is SettingsLoadFailure && previous is! SettingsLoadFailure,
       listener: (context, state) {
         if (state is SettingsLoadFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.failure.userMessage)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.failure.toUserMessage(l10n))),
+          );
         }
       },
       child: BlocBuilder<SettingsBloc, SettingsState>(
@@ -41,7 +42,13 @@ class SettingsScreen extends StatelessWidget {
             ),
             SettingsLoadFailure(:final failure) => Scaffold(
               appBar: AppBar(title: Text(l10n.settings)),
-              body: Center(child: Text('Error: ${failure.userMessage}')),
+              body: AppErrorView(
+                message: failure.toUserMessage(l10n),
+                retryLabel: l10n.retry,
+                onRetry: () => context.read<SettingsBloc>().add(
+                  const SettingsWatchStarted(),
+                ),
+              ),
             ),
           };
         },
