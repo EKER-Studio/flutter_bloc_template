@@ -58,4 +58,44 @@ class AppLocalizationsPl extends AppLocalizations {
   String todoDeleted(String title) {
     return 'Usunięto \"$title\"';
   }
+
+  @override
+  String get receivePushNotifications => 'Otrzymuj powiadomienia push';
+
+  @override
+  String get newTask => 'Nowe zadanie';
+
+  @override
+  String get title => 'Tytuł';
+
+  @override
+  String get titleHint => 'Np. Kupić mleko';
+
+  @override
+  String get titleEmptyError => 'Tytuł nie może być pusty';
+
+  @override
+  String get taskDetails => 'Szczegóły zadania';
+
+  @override
+  String get todoNotFound => 'Nie znaleziono zadania';
+
+  @override
+  String get todoDeletedNotice => 'Zadanie zostało usunięte';
+
+  @override
+  String get completed => 'Ukończone';
+
+  @override
+  String get created => 'Utworzono';
+
+  @override
+  String markAsDone(String title) {
+    return 'Oznacz \"$title\" jako wykonane';
+  }
+
+  @override
+  String markAsNotDone(String title) {
+    return 'Oznacz \"$title\" jako niewykonane';
+  }
 }

@@ -193,6 +193,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleted \"{title}\"'**
   String todoDeleted(String title);
+
+  /// No description provided for @receivePushNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive push notifications'**
+  String get receivePushNotifications;
+
+  /// No description provided for @newTask.
+  ///
+  /// In en, this message translates to:
+  /// **'New Task'**
+  String get newTask;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @titleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Buy milk'**
+  String get titleHint;
+
+  /// No description provided for @titleEmptyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Title cannot be empty'**
+  String get titleEmptyError;
+
+  /// No description provided for @taskDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Details'**
+  String get taskDetails;
+
+  /// No description provided for @todoNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Todo not found'**
+  String get todoNotFound;
+
+  /// No description provided for @todoDeletedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Todo was deleted'**
+  String get todoDeletedNotice;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @markAsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark \"{title}\" as done'**
+  String markAsDone(String title);
+
+  /// No description provided for @markAsNotDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark \"{title}\" as not done'**
+  String markAsNotDone(String title);
 }
 
 class _AppLocalizationsDelegate

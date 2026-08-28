@@ -57,4 +57,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String todoDeleted(String title) {
     return 'Deleted \"$title\"';
   }
+
+  @override
+  String get receivePushNotifications => 'Receive push notifications';
+
+  @override
+  String get newTask => 'New Task';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get titleHint => 'E.g. Buy milk';
+
+  @override
+  String get titleEmptyError => 'Title cannot be empty';
+
+  @override
+  String get taskDetails => 'Task Details';
+
+  @override
+  String get todoNotFound => 'Todo not found';
+
+  @override
+  String get todoDeletedNotice => 'Todo was deleted';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String markAsDone(String title) {
+    return 'Mark \"$title\" as done';
+  }
+
+  @override
+  String markAsNotDone(String title) {
+    return 'Mark \"$title\" as not done';
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/todo.dart';
 import '../bloc/todo_bloc.dart';
 import '../bloc/todo_event.dart';
@@ -17,6 +18,7 @@ class TodoDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocListener<TodoBloc, TodoState>(
       listenWhen: (previous, current) =>
           previous is TodoLoadSuccess &&
@@ -26,7 +28,7 @@ class TodoDetailScreen extends StatelessWidget {
       listener: (context, state) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Todo was deleted')));
+        ).showSnackBar(SnackBar(content: Text(l10n.todoDeletedNotice)));
         Navigator.of(context).pop();
       },
       child: BlocBuilder<TodoBloc, TodoState>(
@@ -38,8 +40,8 @@ class TodoDetailScreen extends StatelessWidget {
 
           if (todo == null) {
             return Scaffold(
-              appBar: AppBar(title: const Text('Task Details')),
-              body: const Center(child: Text('Todo not found')),
+              appBar: AppBar(title: Text(l10n.taskDetails)),
+              body: Center(child: Text(l10n.todoNotFound)),
             );
           }
 
@@ -50,12 +52,13 @@ class TodoDetailScreen extends StatelessWidget {
   }
 
   Scaffold _buildDetails(BuildContext context, Todo todo) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(todo.title),
         actions: [
           IconButton(
-            tooltip: 'Delete',
+            tooltip: l10n.delete,
             icon: const Icon(Icons.delete_outline),
             onPressed: () {
               context.read<TodoBloc>().add(TodoDeleted(todo));
@@ -69,14 +72,14 @@ class TodoDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwitchListTile(
-              title: const Text('Completed'),
+              title: Text(l10n.completed),
               value: todo.isCompleted,
               onChanged: (_) {
                 context.read<TodoBloc>().add(TodoToggled(todo.id));
               },
             ),
             const Divider(),
-            Text('Created', style: Theme.of(context).textTheme.labelMedium),
+            Text(l10n.created, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: 4),
             Text(formatTodoDate(todo.createdAt)),
           ],

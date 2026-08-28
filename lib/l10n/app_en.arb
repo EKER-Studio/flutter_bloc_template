@@ -22,5 +22,31 @@
         "type": "String"
       }
     }
+  },
+  "receivePushNotifications": "Receive push notifications",
+  "newTask": "New Task",
+  "title": "Title",
+  "titleHint": "E.g. Buy milk",
+  "titleEmptyError": "Title cannot be empty",
+  "taskDetails": "Task Details",
+  "todoNotFound": "Todo not found",
+  "todoDeletedNotice": "Todo was deleted",
+  "completed": "Completed",
+  "created": "Created",
+  "markAsDone": "Mark \"{title}\" as done",
+  "@markAsDone": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsNotDone": "Mark \"{title}\" as not done",
+  "@markAsNotDone": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   }
 }

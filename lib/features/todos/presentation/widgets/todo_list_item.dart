@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/todo.dart';
 import '../shared/format.dart';
 
@@ -25,6 +26,7 @@ class TodoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Dismissible(
       key: ValueKey(todo.id),
       direction: DismissDirection.endToStart,
@@ -42,8 +44,8 @@ class TodoListItem extends StatelessWidget {
         onTap: () => context.push('/todo/${todo.id}'),
         leading: Semantics(
           label: todo.isCompleted
-              ? 'Mark "${todo.title}" as not done'
-              : 'Mark "${todo.title}" as done',
+              ? l10n.markAsNotDone(todo.title)
+              : l10n.markAsDone(todo.title),
           child: Checkbox(
             value: todo.isCompleted,
             onChanged: (_) => onToggle(),

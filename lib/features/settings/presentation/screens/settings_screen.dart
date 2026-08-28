@@ -63,7 +63,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           SwitchListTile(
             title: Text(l10n.notifications),
-            subtitle: const Text('Receive push notifications'),
+            subtitle: Text(l10n.receivePushNotifications),
             value: preferences.isNotificationsEnabled,
             onChanged: (value) {
               context.read<SettingsBloc>().add(

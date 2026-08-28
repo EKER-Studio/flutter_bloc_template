@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/app_localizations.dart';
+
 /// Floating action button for adding a new todo item.
 class AddTodoFab extends StatelessWidget {
   /// Creates an [AddTodoFab].
@@ -21,10 +23,11 @@ class AddTodoFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return FloatingActionButton.extended(
       onPressed: () => _showAddDialog(context),
       icon: const Icon(Icons.add),
-      label: const Text('Add'),
+      label: Text(l10n.add),
     );
   }
 }
@@ -55,20 +58,21 @@ class _AddTodoDialogState extends State<_AddTodoDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('New Task'),
+      title: Text(l10n.newTask),
       content: Form(
         key: _formKey,
         child: TextFormField(
           controller: _controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Title',
-            hintText: 'E.g. Buy milk',
+          decoration: InputDecoration(
+            labelText: l10n.title,
+            hintText: l10n.titleHint,
           ),
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'Title cannot be empty';
+              return l10n.titleEmptyError;
             }
             return null;
           },
@@ -78,9 +82,9 @@ class _AddTodoDialogState extends State<_AddTodoDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Add')),
+        FilledButton(onPressed: _submit, child: Text(l10n.add)),
       ],
     );
   }

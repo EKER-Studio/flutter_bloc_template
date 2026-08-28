@@ -22,5 +22,31 @@
         "type": "String"
       }
     }
+  },
+  "receivePushNotifications": "Otrzymuj powiadomienia push",
+  "newTask": "Nowe zadanie",
+  "title": "Tytuł",
+  "titleHint": "Np. Kupić mleko",
+  "titleEmptyError": "Tytuł nie może być pusty",
+  "taskDetails": "Szczegóły zadania",
+  "todoNotFound": "Nie znaleziono zadania",
+  "todoDeletedNotice": "Zadanie zostało usunięte",
+  "completed": "Ukończone",
+  "created": "Utworzono",
+  "markAsDone": "Oznacz \"{title}\" jako wykonane",
+  "@markAsDone": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "markAsNotDone": "Oznacz \"{title}\" jako niewykonane",
+  "@markAsNotDone": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   }
 }
