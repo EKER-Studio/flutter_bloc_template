@@ -19,8 +19,10 @@ class TodoDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<TodoBloc, TodoState>(
       listenWhen: (previous, current) =>
+          previous is TodoLoadSuccess &&
+          previous.todos.any((t) => t.id == todoId) &&
           current is TodoLoadSuccess &&
-          current.todos.where((t) => t.id == todoId).isEmpty,
+          !current.todos.any((t) => t.id == todoId),
       listener: (context, state) {
         ScaffoldMessenger.of(
           context,
