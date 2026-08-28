@@ -22,19 +22,15 @@ void main() {
       ),
     );
 
-    // 1. Tap the FAB
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    // 2. Verify dialog is shown
     expect(find.text('New Task'), findsOneWidget);
 
-    // 3. Enter text
     await tester.enterText(find.byType(TextFormField), 'Buy milk');
     await tester.tap(find.widgetWithText(FilledButton, 'Add'));
     await tester.pumpAndSettle();
 
-    // 4. Verify callback was called with correct title
     expect(addedTitle, 'Buy milk');
     expect(find.text('New Task'), findsNothing);
   });
@@ -58,15 +54,12 @@ void main() {
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
 
-    // Tap Add without entering text
     await tester.tap(find.widgetWithText(FilledButton, 'Add'));
     await tester.pumpAndSettle();
 
-    // Verify validation error is shown and callback not called
     expect(find.text('Title cannot be empty'), findsOneWidget);
     expect(onAddCalled, isFalse);
 
-    // Enter only whitespace
     await tester.enterText(find.byType(TextFormField), '   ');
     await tester.tap(find.widgetWithText(FilledButton, 'Add'));
     await tester.pumpAndSettle();

@@ -66,7 +66,6 @@ void main() {
       ),
     );
 
-    // Swipe to delete (DismissDirection.endToStart)
     await tester.drag(find.byType(Dismissible), const Offset(-500, 0));
     await tester.pumpAndSettle();
 

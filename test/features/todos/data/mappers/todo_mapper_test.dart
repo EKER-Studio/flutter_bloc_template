@@ -11,17 +11,14 @@ void main() {
 
   group('TodoMapper', () {
     test('toEntity() converts TodoModel to Todo entity correctly', () {
-      // Arrange
       final model = TodoModel()
         ..id = tId
         ..title = tTitle
         ..isCompleted = tIsCompleted
         ..createdAt = tDate;
 
-      // Act
       final entity = model.toEntity();
 
-      // Assert
       expect(entity, isA<Todo>());
       expect(entity.id, tId);
       expect(entity.title, tTitle);
@@ -30,7 +27,6 @@ void main() {
     });
 
     test('toModel() converts Todo entity to TodoModel correctly', () {
-      // Arrange
       final entity = Todo(
         id: tId,
         title: tTitle,
@@ -38,10 +34,8 @@ void main() {
         createdAt: tDate,
       );
 
-      // Act
       final model = entity.toModel();
 
-      // Assert
       expect(model, isA<TodoModel>());
       expect(model.id, tId);
       expect(model.title, tTitle);

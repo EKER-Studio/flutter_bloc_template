@@ -8,15 +8,12 @@ void main() {
     test(
       'toEntity() converts UserPreferencesModel to UserPreferences entity correctly',
       () {
-        // Arrange
         final model = UserPreferencesModel()
           ..themeMode = 'dark'
           ..isNotificationsEnabled = false;
 
-        // Act
         final entity = model.toEntity();
 
-        // Assert
         expect(entity.themeMode, UserThemeMode.dark);
         expect(entity.isNotificationsEnabled, false);
       },
@@ -25,15 +22,12 @@ void main() {
     test(
       'toEntity() defaults to system theme mode if storage value is invalid',
       () {
-        // Arrange
         final model = UserPreferencesModel()
           ..themeMode = 'invalid_mode'
           ..isNotificationsEnabled = true;
 
-        // Act
         final entity = model.toEntity();
 
-        // Assert
         expect(entity.themeMode, UserThemeMode.system);
       },
     );
@@ -41,16 +35,13 @@ void main() {
     test(
       'toModel() converts UserPreferences entity to UserPreferencesModel correctly',
       () {
-        // Arrange
         const entity = UserPreferences(
           themeMode: UserThemeMode.light,
           isNotificationsEnabled: true,
         );
 
-        // Act
         final model = entity.toModel();
 
-        // Assert
         expect(model.id, userPreferencesSingletonId);
         expect(model.themeMode, 'light');
         expect(model.isNotificationsEnabled, true);
