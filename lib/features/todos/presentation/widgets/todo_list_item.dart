@@ -7,7 +7,6 @@ import '../shared/format.dart';
 
 /// List item widget displaying a todo item.
 class TodoListItem extends StatelessWidget {
-  /// Creates a [TodoListItem].
   const TodoListItem({
     super.key,
     required this.todo,

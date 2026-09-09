@@ -6,7 +6,6 @@ import '../repositories/todo_repository.dart';
 /// Use case that adds a new todo item.
 @injectable
 class AddTodoUseCase {
-  /// Creates an [AddTodoUseCase] instance.
   const AddTodoUseCase(this._repository);
 
   final TodoRepository _repository;

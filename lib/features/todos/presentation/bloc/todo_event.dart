@@ -9,13 +9,11 @@ sealed class TodoEvent {
 
 /// Requests the initial load of all todos.
 class WatchTodos extends TodoEvent {
-  /// Creates a [WatchTodos] event.
   const WatchTodos();
 }
 
 /// Adds a new todo with the given title.
 class TodoAdded extends TodoEvent {
-  /// Creates a [TodoAdded] event with the given [title].
   const TodoAdded(this.title);
 
   /// The title of the new todo.
@@ -24,7 +22,6 @@ class TodoAdded extends TodoEvent {
 
 /// Toggles the completed state of a todo identified by [id].
 class TodoToggled extends TodoEvent {
-  /// Creates a [TodoToggled] event for the todo with [id].
   const TodoToggled(this.id);
 
   /// The id of the todo to toggle.
@@ -33,7 +30,6 @@ class TodoToggled extends TodoEvent {
 
 /// Deletes a todo.
 class TodoDeleted extends TodoEvent {
-  /// Creates a [TodoDeleted] event for the given [todo].
   const TodoDeleted(this.todo);
 
   /// The todo to delete.
@@ -42,7 +38,6 @@ class TodoDeleted extends TodoEvent {
 
 /// Restores a previously deleted todo.
 class TodoRestored extends TodoEvent {
-  /// Creates a [TodoRestored] event for the given [todo].
   const TodoRestored(this.todo);
 
   /// The todo to restore.
@@ -52,7 +47,6 @@ class TodoRestored extends TodoEvent {
 /// Internal event emitted by the watch stream subscription when the repository
 /// reports an updated todo list. Not intended to be dispatched from the UI.
 class TodosUpdated extends TodoEvent {
-  /// Creates a [TodosUpdated] event with the given [todos].
   const TodosUpdated(this.todos);
 
   /// The complete current list of todos.
@@ -62,7 +56,6 @@ class TodosUpdated extends TodoEvent {
 /// Internal event emitted by the watch stream subscription when the repository
 /// reports an error. Not intended to be dispatched from the UI.
 class TodoWatchFailed extends TodoEvent {
-  /// Creates a [TodoWatchFailed] event with the given [failure].
   const TodoWatchFailed(this.failure);
 
   /// Describes what went wrong.

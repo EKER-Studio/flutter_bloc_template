@@ -7,7 +7,6 @@ import '../repositories/todo_repository.dart';
 /// Use case that restores a previously deleted todo item.
 @injectable
 class RestoreTodoUseCase {
-  /// Creates a [RestoreTodoUseCase] instance.
   const RestoreTodoUseCase(this._repository);
 
   final TodoRepository _repository;

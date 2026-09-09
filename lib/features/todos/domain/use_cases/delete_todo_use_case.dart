@@ -6,7 +6,6 @@ import '../repositories/todo_repository.dart';
 /// Use case that deletes a todo item.
 @injectable
 class DeleteTodoUseCase {
-  /// Creates a [DeleteTodoUseCase] instance.
   const DeleteTodoUseCase(this._repository);
 
   final TodoRepository _repository;

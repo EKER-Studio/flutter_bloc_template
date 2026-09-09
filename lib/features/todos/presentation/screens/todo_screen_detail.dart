@@ -10,7 +10,6 @@ import '../shared/format.dart';
 
 /// Screen displaying the details of a single todo item.
 class TodoDetailScreen extends StatelessWidget {
-  /// Creates a [TodoDetailScreen] for the todo identified by [todoId].
   const TodoDetailScreen({super.key, required this.todoId});
 
   /// The id of the todo to display.

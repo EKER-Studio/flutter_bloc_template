@@ -1,6 +1,5 @@
 /// Domain entity representing a single todo item.
 class Todo {
-  /// Creates a [Todo] instance.
   const Todo({
     required this.id,
     required this.title,

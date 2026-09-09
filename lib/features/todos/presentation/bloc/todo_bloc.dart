@@ -17,7 +17,6 @@ import 'todo_state.dart';
 /// BLoC managing the todo list state via clean architecture use cases.
 @injectable
 class TodoBloc extends Bloc<TodoEvent, TodoState> {
-  /// Creates a bloc backed by the domain use cases.
   TodoBloc(
     this._watchTodos,
     this._addTodo,
