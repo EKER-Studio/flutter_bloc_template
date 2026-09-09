@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-import 'core/config/app_environment.dart';
 import 'core/presentation/bloc/app_theme_bloc.dart';
 import 'core/presentation/bloc/app_theme_event.dart';
 import 'core/presentation/bloc/app_theme_state.dart';
@@ -49,7 +48,7 @@ class _AppView extends StatelessWidget {
     return BlocBuilder<AppThemeBloc, AppThemeState>(
       builder: (context, state) {
         return MaterialApp.router(
-          title: AppConfig.appName,
+          onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
           routerConfig: appRouter,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

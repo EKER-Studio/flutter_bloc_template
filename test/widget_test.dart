@@ -42,4 +42,38 @@ void main() {
 
     expect(find.byType(MaterialApp), findsOneWidget);
   });
+
+  testWidgets('MaterialApp onGenerateTitle resolves localized appTitle', (
+    tester,
+  ) async {
+    late String generatedTitle;
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateTitle: (context) {
+          generatedTitle = AppLocalizations.of(context).appTitle;
+          return generatedTitle;
+        },
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const SizedBox.shrink(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(generatedTitle, equals('Todos'));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('pl'),
+        onGenerateTitle: (context) {
+          generatedTitle = AppLocalizations.of(context).appTitle;
+          return generatedTitle;
+        },
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const SizedBox.shrink(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(generatedTitle, equals('Zadania'));
+  });
 }
