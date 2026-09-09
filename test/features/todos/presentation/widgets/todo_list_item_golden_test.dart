@@ -16,6 +16,8 @@ void main() {
     testWidgets('Active state', (tester) async {
       tester.view.physicalSize = const Size(500, 100);
       tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final todo = Todo(
         id: 1,
@@ -26,6 +28,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
@@ -38,14 +41,13 @@ void main() {
         find.byType(TodoListItem),
         matchesGoldenFile('goldens/todo_list_item_active.png'),
       );
-
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
     });
 
     testWidgets('Completed state', (tester) async {
       tester.view.physicalSize = const Size(500, 100);
       tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final todo = Todo(
         id: 1,
@@ -56,6 +58,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
@@ -68,9 +71,6 @@ void main() {
         find.byType(TodoListItem),
         matchesGoldenFile('goldens/todo_list_item_completed.png'),
       );
-
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
     });
   }, skip: !Platform.isMacOS);
 }

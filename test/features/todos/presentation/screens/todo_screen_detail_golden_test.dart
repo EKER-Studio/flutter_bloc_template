@@ -20,6 +20,8 @@ void main() {
     testWidgets('Detail state', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 3.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final repository = FakeTodoRepository(
         initialTodos: [
@@ -31,11 +33,15 @@ void main() {
           ),
         ],
       );
+      addTearDown(repository.dispose);
+      final bloc = TodoBloc.fromRepository(repository)..add(const WatchTodos());
+      addTearDown(bloc.close);
 
       await tester.pumpWidget(
         BlocProvider<TodoBloc>.value(
-          value: TodoBloc.fromRepository(repository)..add(const WatchTodos()),
+          value: bloc,
           child: const MaterialApp(
+            locale: Locale('en'),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: TodoDetailScreen(todoId: 1),
@@ -49,9 +55,6 @@ void main() {
         find.byType(TodoDetailScreen),
         matchesGoldenFile('goldens/todo_detail.png'),
       );
-
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
     });
   }, skip: !Platform.isMacOS);
 }

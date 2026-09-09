@@ -15,14 +15,15 @@ import 'helpers/fake_user_preferences_repository.dart';
 void main() {
   testWidgets('App renders without crashing', (tester) async {
     final prefsRepo = FakeUserPreferencesRepository();
+    final todoRepo = FakeTodoRepository();
     addTearDown(prefsRepo.dispose);
+    addTearDown(todoRepo.dispose);
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
           BlocProvider<TodoBloc>(
             create: (_) =>
-                TodoBloc.fromRepository(FakeTodoRepository())
-                  ..add(const WatchTodos()),
+                TodoBloc.fromRepository(todoRepo)..add(const WatchTodos()),
           ),
           BlocProvider<SettingsBloc>(
             create: (_) =>

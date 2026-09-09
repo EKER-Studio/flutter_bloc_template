@@ -24,27 +24,35 @@ void main() {
   testWidgets('TodoScreen Golden Test', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final themeRepo = FakeUserPreferencesRepository();
+    final todoRepo = FakeTodoRepository();
+    final settingsRepo = FakeUserPreferencesRepository();
+    addTearDown(themeRepo.dispose);
+    addTearDown(todoRepo.dispose);
+    addTearDown(settingsRepo.dispose);
 
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
           BlocProvider<AppThemeBloc>(
             create: (_) =>
-                AppThemeBloc(FakeUserPreferencesRepository())
-                  ..add(const AppThemeWatchStarted()),
+                AppThemeBloc(themeRepo)..add(const AppThemeWatchStarted()),
           ),
           BlocProvider<TodoBloc>(
             create: (_) =>
-                TodoBloc.fromRepository(FakeTodoRepository())
-                  ..add(const WatchTodos()),
+                TodoBloc.fromRepository(todoRepo)..add(const WatchTodos()),
           ),
           BlocProvider<SettingsBloc>(
             create: (_) =>
-                SettingsBloc.fromRepository(FakeUserPreferencesRepository())
+                SettingsBloc.fromRepository(settingsRepo)
                   ..add(const SettingsWatchStarted()),
           ),
         ],
         child: MaterialApp(
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
@@ -59,8 +67,5 @@ void main() {
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/todo_screen.png'),
     );
-
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
   }, skip: !Platform.isMacOS);
 }

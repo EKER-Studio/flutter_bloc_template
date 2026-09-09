@@ -20,6 +20,8 @@ void main() {
   testWidgets('Settings screen golden test', (tester) async {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
     final fakeRepo = FakeUserPreferencesRepository(
       initialPreferences: const UserPreferences(
@@ -30,11 +32,13 @@ void main() {
     addTearDown(fakeRepo.dispose);
     final bloc = SettingsBloc.fromRepository(fakeRepo)
       ..add(const SettingsWatchStarted());
+    addTearDown(bloc.close);
 
     await tester.pumpWidget(
       BlocProvider.value(
         value: bloc,
         child: MaterialApp(
+          locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
@@ -49,10 +53,5 @@ void main() {
       find.byType(SettingsScreen),
       matchesGoldenFile('goldens/settings_screen.png'),
     );
-
-    tester.view.resetPhysicalSize();
-    tester.view.resetDevicePixelRatio();
-
-    bloc.close();
   }, skip: !Platform.isMacOS);
 }
