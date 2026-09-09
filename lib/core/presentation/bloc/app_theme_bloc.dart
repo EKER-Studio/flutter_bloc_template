@@ -11,7 +11,7 @@ import 'app_theme_state.dart';
 
 /// BLoC that follows the repository-backed theme mode stream, exposes the
 /// runtime theme state used by the material app, and persists theme state via [HydratedBloc].
-@lazySingleton
+@injectable
 class AppThemeBloc extends HydratedBloc<AppThemeEvent, AppThemeState> {
   AppThemeBloc(this._repository) : super(const AppThemeState.system()) {
     on<AppThemeWatchStarted>(_onWatchStarted);

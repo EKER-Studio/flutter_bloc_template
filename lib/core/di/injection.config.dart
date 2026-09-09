@@ -58,7 +58,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i408.TodoRepository>(
       () => _i888.TodoRepositoryImpl(gh<_i214.Isar>()),
     );
-    gh.lazySingleton<_i464.AppThemeBloc>(
+    gh.factory<_i464.AppThemeBloc>(
       () => _i464.AppThemeBloc(gh<_i1060.UserPreferencesRepository>()),
     );
     gh.factory<_i910.UpdateNotificationsEnabledUseCase>(
