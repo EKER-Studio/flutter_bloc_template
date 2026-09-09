@@ -65,23 +65,28 @@ class TodoDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SwitchListTile(
-              title: Text(l10n.completed),
-              value: todo.isCompleted,
-              onChanged: (_) {
-                context.read<TodoBloc>().add(TodoToggled(todo.id));
-              },
-            ),
-            const Divider(),
-            Text(l10n.created, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: 4),
-            Text(formatTodoDate(todo.createdAt)),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SwitchListTile(
+                title: Text(l10n.completed),
+                value: todo.isCompleted,
+                onChanged: (_) {
+                  context.read<TodoBloc>().add(TodoToggled(todo.id));
+                },
+              ),
+              const Divider(),
+              Text(
+                l10n.created,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 4),
+              Text(formatTodoDate(todo.createdAt)),
+            ],
+          ),
         ),
       ),
     );
