@@ -54,7 +54,10 @@ class TodoRepositoryImpl implements TodoRepository {
     var attempt = 0;
     while (attempt < maxRetries) {
       try {
-        yield* createStream();
+        await for (final event in createStream()) {
+          attempt = 0;
+          yield event;
+        }
         return;
       } catch (e, s) {
         attempt++;
