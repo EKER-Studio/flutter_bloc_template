@@ -18,7 +18,6 @@ import 'l10n/app_localizations.dart';
 /// Root widget that configures BLoCs, applies theme preferences, and hosts the
 /// router configuration.
 class App extends StatelessWidget {
-  /// Creates an [App].
   const App({super.key});
 
   @override
