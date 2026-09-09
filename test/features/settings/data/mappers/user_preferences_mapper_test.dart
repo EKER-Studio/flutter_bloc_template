@@ -5,47 +5,49 @@ import 'package:flutter_bloc_boilerplate/features/settings/domain/entities/user_
 
 void main() {
   group('UserPreferencesMapper', () {
-    test(
-      'toEntity() converts UserPreferencesModel to UserPreferences entity correctly',
-      () {
-        final model = UserPreferencesModel()
-          ..themeMode = 'dark'
-          ..isNotificationsEnabled = false;
+    for (final mode in UserThemeMode.values) {
+      for (final notifications in [true, false]) {
+        test('round-trips ${mode.name} with notifications=$notifications', () {
+          final entity = UserPreferences(
+            themeMode: mode,
+            isNotificationsEnabled: notifications,
+          );
 
-        final entity = model.toEntity();
+          final model = entity.toModel();
+          expect(model.id, userPreferencesSingletonId);
+          expect(model.themeMode, mode.name);
+          expect(model.isNotificationsEnabled, notifications);
 
-        expect(entity.themeMode, UserThemeMode.dark);
-        expect(entity.isNotificationsEnabled, false);
-      },
-    );
+          final reconstructed = model.toEntity();
+          expect(reconstructed.themeMode, mode);
+          expect(reconstructed.isNotificationsEnabled, notifications);
+        });
+      }
+    }
 
     test(
       'toEntity() defaults to system theme mode if storage value is invalid',
       () {
         final model = UserPreferencesModel()
-          ..themeMode = 'invalid_mode'
+          ..themeMode = 'unknown_future_mode'
           ..isNotificationsEnabled = true;
 
         final entity = model.toEntity();
 
         expect(entity.themeMode, UserThemeMode.system);
+        expect(entity.isNotificationsEnabled, isTrue);
       },
     );
 
-    test(
-      'toModel() converts UserPreferences entity to UserPreferencesModel correctly',
-      () {
-        const entity = UserPreferences(
-          themeMode: UserThemeMode.light,
-          isNotificationsEnabled: true,
-        );
+    test('toEntity() defaults to system theme mode on empty string', () {
+      final model = UserPreferencesModel()
+        ..themeMode = ''
+        ..isNotificationsEnabled = false;
 
-        final model = entity.toModel();
+      final entity = model.toEntity();
 
-        expect(model.id, userPreferencesSingletonId);
-        expect(model.themeMode, 'light');
-        expect(model.isNotificationsEnabled, true);
-      },
-    );
+      expect(entity.themeMode, UserThemeMode.system);
+      expect(entity.isNotificationsEnabled, isFalse);
+    });
   });
 }
