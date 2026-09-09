@@ -8,19 +8,16 @@ sealed class SettingsState {
 
 /// Initial state before [SettingsBloc] begins watching preferences.
 class SettingsInitial extends SettingsState {
-  /// Creates a [SettingsInitial] state.
   const SettingsInitial();
 }
 
 /// Emitted while preferences are being loaded.
 class SettingsLoadInProgress extends SettingsState {
-  /// Creates a [SettingsLoadInProgress] state.
   const SettingsLoadInProgress();
 }
 
 /// Emitted when preferences were loaded successfully.
 class SettingsLoadSuccess extends SettingsState {
-  /// Creates a [SettingsLoadSuccess] state with the given [preferences].
   const SettingsLoadSuccess(this.preferences);
 
   /// The loaded user preferences.
@@ -29,7 +26,6 @@ class SettingsLoadSuccess extends SettingsState {
 
 /// Emitted when preferences failed to load or update.
 class SettingsLoadFailure extends SettingsState {
-  /// Creates a [SettingsLoadFailure] state with the given [failure].
   const SettingsLoadFailure(this.failure);
 
   /// Describes what went wrong.

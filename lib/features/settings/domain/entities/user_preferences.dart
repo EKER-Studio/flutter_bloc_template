@@ -12,7 +12,6 @@ enum UserThemeMode {
 
 /// Domain entity representing user preferences.
 class UserPreferences {
-  /// Creates a [UserPreferences] instance.
   const UserPreferences({
     required this.themeMode,
     required this.isNotificationsEnabled,

@@ -12,7 +12,6 @@ import '../bloc/settings_state.dart';
 
 /// Screen displaying user settings and preferences.
 class SettingsScreen extends StatelessWidget {
-  /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override

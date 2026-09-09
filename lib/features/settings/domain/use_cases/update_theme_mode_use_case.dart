@@ -7,7 +7,6 @@ import '../repositories/user_preferences_repository.dart';
 /// Use case that updates the selected application theme mode.
 @injectable
 class UpdateThemeModeUseCase {
-  /// Creates an [UpdateThemeModeUseCase] instance.
   const UpdateThemeModeUseCase(this._repository);
 
   final UserPreferencesRepository _repository;

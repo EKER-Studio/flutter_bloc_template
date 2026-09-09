@@ -6,7 +6,6 @@ import '../repositories/user_preferences_repository.dart';
 /// Use case that updates the notifications enabled preference.
 @injectable
 class UpdateNotificationsEnabledUseCase {
-  /// Creates an [UpdateNotificationsEnabledUseCase] instance.
   const UpdateNotificationsEnabledUseCase(this._repository);
 
   final UserPreferencesRepository _repository;

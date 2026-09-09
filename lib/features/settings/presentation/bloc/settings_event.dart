@@ -9,14 +9,12 @@ sealed class SettingsEvent {
 
 /// Requests the start of the preferences watch stream.
 class SettingsWatchStarted extends SettingsEvent {
-  /// Creates a [SettingsWatchStarted] event.
   const SettingsWatchStarted();
 }
 
 /// Persists the selected theme mode. The resulting preferences change is
 /// propagated back to the state via the repository watch stream.
 class SettingsThemeModeUpdated extends SettingsEvent {
-  /// Creates a [SettingsThemeModeUpdated] event with the given [mode].
   const SettingsThemeModeUpdated(this.mode);
 
   /// The theme mode to persist.
@@ -26,7 +24,6 @@ class SettingsThemeModeUpdated extends SettingsEvent {
 /// Persists the notifications toggle and immediately emits the updated
 /// preference without relying on the watch stream alone.
 class SettingsNotificationsUpdated extends SettingsEvent {
-  /// Creates a [SettingsNotificationsUpdated] event with the given [enabled].
   const SettingsNotificationsUpdated(this.enabled);
 
   /// Whether notifications should be enabled.
@@ -36,7 +33,6 @@ class SettingsNotificationsUpdated extends SettingsEvent {
 /// Internal event emitted by the watch stream subscription when the repository
 /// reports updated preferences. Not intended to be dispatched from the UI.
 class SettingsPreferencesUpdated extends SettingsEvent {
-  /// Creates a [SettingsPreferencesUpdated] event with the given [preferences].
   const SettingsPreferencesUpdated(this.preferences);
 
   /// The complete current user preferences.
@@ -46,7 +42,6 @@ class SettingsPreferencesUpdated extends SettingsEvent {
 /// Internal event emitted by the watch stream subscription when the repository
 /// reports an error. Not intended to be dispatched from the UI.
 class SettingsWatchFailed extends SettingsEvent {
-  /// Creates a [SettingsWatchFailed] event with the given [failure].
   const SettingsWatchFailed(this.failure);
 
   /// Describes what went wrong.

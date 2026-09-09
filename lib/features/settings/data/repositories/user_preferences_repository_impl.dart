@@ -13,7 +13,6 @@ import '../models/user_preferences_model.dart';
 /// Implementation of [UserPreferencesRepository] using Isar.
 @LazySingleton(as: UserPreferencesRepository)
 class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
-  /// Creates a new [UserPreferencesRepositoryImpl] with the given Isar instance.
   UserPreferencesRepositoryImpl(this._isar);
 
   final Isar _isar;

@@ -6,7 +6,6 @@ import '../repositories/user_preferences_repository.dart';
 /// Use case that streams the latest user preferences.
 @injectable
 class WatchUserPreferencesUseCase {
-  /// Creates a [WatchUserPreferencesUseCase] instance.
   const WatchUserPreferencesUseCase(this._repository);
 
   final UserPreferencesRepository _repository;

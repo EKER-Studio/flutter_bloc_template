@@ -15,7 +15,6 @@ import 'settings_state.dart';
 /// BLoC managing user preferences state via clean architecture use cases.
 @injectable
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
-  /// Creates a bloc backed by the domain use cases.
   SettingsBloc(
     this._watchUserPreferences,
     this._updateThemeMode,
