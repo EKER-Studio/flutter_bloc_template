@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Reusable empty state widget with icon, title, and optional description.
 class AppEmptyView extends StatelessWidget {
-  /// Creates an [AppEmptyView].
   const AppEmptyView({
     super.key,
     required this.title,

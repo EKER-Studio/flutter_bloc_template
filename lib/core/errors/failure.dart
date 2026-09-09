@@ -14,25 +14,21 @@ sealed class Failure {
 
 /// Failure originating from a database operation.
 class DatabaseFailure extends Failure {
-  /// Creates a [DatabaseFailure] with the given [message].
   const DatabaseFailure(super.message);
 }
 
 /// Failure indicating that a requested resource was not found.
 class NotFoundFailure extends Failure {
-  /// Creates a [NotFoundFailure] with the given [message].
   const NotFoundFailure(super.message);
 }
 
 /// Failure originating from a network or HTTP transport error.
 class NetworkFailure extends Failure {
-  /// Creates a [NetworkFailure] with the given [message].
   const NetworkFailure(super.message);
 }
 
 /// Failure indicating that the user is not authenticated or the session expired.
 class UnauthorizedFailure extends Failure {
-  /// Creates an [UnauthorizedFailure] with the given [message].
   const UnauthorizedFailure(super.message);
 }
 
@@ -41,8 +37,6 @@ class UnauthorizedFailure extends Failure {
 /// [fieldErrors] maps field names to their validation messages so the UI can
 /// surface per-field feedback without parsing raw error strings.
 class ValidationFailure extends Failure {
-  /// Creates a [ValidationFailure] with the given [message] and optional
-  /// per-field [fieldErrors].
   const ValidationFailure(super.message, {this.fieldErrors = const {}});
 
   /// Per-field validation messages keyed by field name.

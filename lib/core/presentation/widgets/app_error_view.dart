@@ -4,7 +4,6 @@ import '../../../l10n/app_localizations.dart';
 
 /// Reusable error display widget with an optional retry action.
 class AppErrorView extends StatelessWidget {
-  /// Creates an [AppErrorView].
   const AppErrorView({
     super.key,
     required this.message,

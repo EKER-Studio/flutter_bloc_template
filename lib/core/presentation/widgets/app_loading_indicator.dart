@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Reusable centered loading indicator widget.
 class AppLoadingIndicator extends StatelessWidget {
-  /// Creates an [AppLoadingIndicator].
   const AppLoadingIndicator({super.key, this.message});
 
   /// Optional message to display below the progress indicator.
