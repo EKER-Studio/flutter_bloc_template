@@ -1,6 +1,6 @@
-# 🚀 Flutter Local-First Blueprint — BLoC + GetIt + Injectable + Isar Clean Architecture (v1.1.0)
+# 🚀 Flutter Local-First Blueprint — BLoC + GetIt + Injectable + Isar Clean Architecture (v1.2.0)
 
-[![Release](https://img.shields.io/badge/Release-v1.1.0-blue.svg)](CHANGELOG.md)
+[![Release](https://img.shields.io/badge/Release-v1.2.0-blue.svg)](CHANGELOG.md)
 [![Flutter](https://img.shields.io/badge/Flutter-3.47+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.12+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![State](https://img.shields.io/badge/State-BLoC_9.x-0553B1)](https://bloclibrary.dev)
@@ -336,4 +336,4 @@ dart run build_runner build --delete-conflicting-outputs
 
  ## 📝 Changelog
 
- See [CHANGELOG.md](CHANGELOG.md) for release history. Current version: **v1.1.0** — [Release notes](CHANGELOG.md#110---2026-08-28).
+ See [CHANGELOG.md](CHANGELOG.md) for release history. Current version: **v1.2.0** — [Release notes](CHANGELOG.md#120---2026-09-09).

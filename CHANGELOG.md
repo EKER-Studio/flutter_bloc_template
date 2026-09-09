@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-09
+
+### Release v1.2.0 — Architecture Audits, Governance & Release Automation
+
+Consolidated release hardening the BLoC production blueprint with automated GitHub Actions release pipelines, expanded unit test coverage, domain purity restoration, developer audit tooling, and repository governance.
+
+Compare: [`v1.1.0...v1.2.0`](https://github.com/EKER-Studio/flutter_bloc_template/compare/v1.1.0...v1.2.0)
+
+#### 🚀 Highlights & Features
+
+* **CI/CD & Automated Release Pipeline:**
+  * Adopted `develop` as the primary integration branch and default branch on GitHub, strictly separating development from production releases.
+  * Added dedicated Release workflow ([`release.yml`](.github/workflows/release.yml)) to automatically build release APKs, upload artifacts, and publish GitHub Releases on `v*` tags.
+  * Enhanced CI test stability on Linux runners with dynamic caching and fetching of the native `libisar.so` core binary.
+  * Integrated automated test coverage calculation, summary tables in `$GITHUB_STEP_SUMMARY`, and `coverage/lcov.info` artifact reporting.
+  * Pinned Flutter version to `3.47.2` for Dart analyzer and dependency compatibility.
+  * Added conditional release keystore signing via `key.properties` in Android Gradle with automatic fallback to debug keys.
+* **Architecture & Clean Code Refinement:**
+  * Restored domain purity by extracting UI localized message logic out of `Failure` entity into `FailureUserMessage` extension in presentation.
+  * Registered `AppThemeBloc` as an `@injectable` factory instead of singleton for lifecycle safety.
+  * Localized application title dynamically via `onGenerateTitle` in `MaterialApp.router`.
+  * Fixed `SingleChildScrollView` layout wrapping in `TodoScreenDetail` to prevent keyboard and small-screen overflow.
+  * Reset stream retry counters on successful emissions in Isar repositories (`TodoRepositoryImpl`, `UserPreferencesRepositoryImpl`).
+  * Moved `flutter_native_splash` to `dev_dependencies` to optimize production dependencies.
+  * Comprehensive comment and DartDoc cleanup across `app`, `core`, `settings`, and `todos` modules.
+* **Test Suite & Quality Assurance:**
+  * Added extensive unit tests covering the `Failure` sealed hierarchy and `FailureUserMessage` extension.
+  * Added unit tests for `UserPreferences` entity, use cases (`WatchUserPreferencesUseCase`, `UpdateThemeModeUseCase`, `UpdateNotificationsEnabledUseCase`), repository (`UserPreferencesRepositoryImpl`), and mapper (`UserPreferencesMapper`).
+  * Added unit tests for `Todo` entity, use cases (`WatchTodosUseCase`, `AddTodoUseCase`, `ToggleTodoUseCase`, `DeleteTodoUseCase`, `RestoreTodoUseCase`), repository (`TodoRepositoryImpl`), and date formatting helper (`formatTodoDate`).
+  * Fixed resource leaks in fake repositories (`FakeTodoRepository`, `FakeUserPreferencesRepository`) and BLoC test suites.
+* **Developer Tooling & Architecture Audits:**
+  * Added specialized AI audit prompts in `prompts/` covering deep BLoC architecture audit, unit testing framework, i18n/l10n audits, and DartDoc cleanup.
+  * Added GitHub Copilot project guidelines ([`.github/copilot-instructions.md`](.github/copilot-instructions.md)).
+  * Added canonical 5-step feature scaffold guide to `README.md`.
+* **Repository Governance & Project Hygiene:**
+  * Added standardized GitHub Issue templates (bug, feature, config) and PR templates (feature, bug_fix, chore).
+  * Formalized contribution and branch workflows in [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md).
+  * Hardened `.gitignore` to track Firebase options while ignoring local keystores, build artifacts, and agent audit directories.
+
 ## [1.1.0] - 2026-08-28
 
 ### Release v1.1.0 — Production Blueprint & Tooling Upgrade
@@ -93,6 +132,7 @@ Initial stable release. Certified local-first blueprint with BLoC + GetIt + Inje
 
 Pre-stable baseline for internal validation. Full `Todo` + `Settings` features, Isar integration, and initial documentation.
 
+[1.2.0]: https://github.com/EKER-Studio/flutter_bloc_template/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/EKER-Studio/flutter_bloc_template/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/EKER-Studio/flutter_bloc_template/compare/v0.9.0-full-bloc-baseline...v1.0.0
 [0.9.0]: https://github.com/EKER-Studio/flutter_bloc_template/releases/tag/v0.9.0-full-bloc-baseline
