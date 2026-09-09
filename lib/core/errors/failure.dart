@@ -1,5 +1,3 @@
-import '../../l10n/app_localizations.dart';
-
 /// Base class for all domain-level failures.
 ///
 /// Subclasses represent specific categories of errors that can occur
@@ -41,16 +39,4 @@ class ValidationFailure extends Failure {
 
   /// Per-field validation messages keyed by field name.
   final Map<String, String> fieldErrors;
-}
-
-/// Maps each [Failure] to localized text safe to show directly to end users.
-extension FailureUserMessage on Failure {
-  /// Returns a localized user-friendly message for this failure.
-  String toUserMessage(AppLocalizations l10n) => switch (this) {
-    NotFoundFailure() => l10n.errorNotFound,
-    DatabaseFailure() => l10n.errorDatabase,
-    NetworkFailure() => l10n.errorNetwork,
-    UnauthorizedFailure() => l10n.errorUnauthorized,
-    ValidationFailure() => l10n.errorValidation,
-  };
 }
