@@ -277,6 +277,51 @@ When using this template for a new application:
    ./scripts/before_push.sh
    ```
 
+## 🏗️ Feature Scaffold Guide: Adding a New Feature
+
+Follow this canonical 5-step workflow to implement any new feature while preserving architectural purity:
+
+### 1. Domain Layer (`lib/features/<feature>/domain/`)
+*Pure Dart — Zero Flutter or third-party persistence dependencies.*
+- **Entity**: Define immutable data models (e.g. `lib/features/<feature>/domain/entities/item.dart`).
+- **Repository Interface**: Define the abstract contract using Dart Streams and Records for errors:
+  ```dart
+  abstract interface class ItemRepository {
+    Stream<List<Item>> watchAll();
+    Future<(bool success, Failure? failure)> add(Item item);
+  }
+  ```
+- **Use Cases**: Create single-responsibility use cases with `@injectable` or pass repository via constructor.
+
+### 2. Data Layer (`lib/features/<feature>/data/`)
+*Database schemas, mappers, and repository implementations.*
+- **Isar Model**: Create `@collection` class with type-safe schema (`models/item_model.dart`).
+- **Stateless Mapper**: Extension methods converting `ItemModel` <-> `Item` without side-effects (`mappers/item_mapper.dart`).
+- **Repository Impl**: Implement the domain repository interface and annotate with `@LazySingleton(as: ItemRepository)`:
+  ```dart
+  @LazySingleton(as: ItemRepository)
+  class ItemRepositoryImpl implements ItemRepository { ... }
+  ```
+
+### 3. Presentation Layer (`lib/features/<feature>/presentation/`)
+*BLoC state management and UI widgets.*
+- **State & Events**: Sealed classes defining explicit lifecycle states (`Initial`, `InProgress`, `Success`, `Failure`).
+- **BLoC**: Annotate with `@injectable` (instantiated as factory per screen lifecycle). Store stream subscriptions and cleanly cancel them in `close()`.
+- **UI Screen & Widgets**: Pure presentation widgets listening to states via `BlocBuilder` / `BlocConsumer`.
+
+### 4. Routing & Dependency Injection
+- Register route in `lib/core/router/app_router.dart` using `GoRoute`.
+- Provide the BLoC to the route using `BlocProvider(create: (_) => GetIt.instance<ItemBloc>()..add(const WatchItems()))`.
+
+### 5. Regenerate & Verify
+```bash
+# Regenerate Injectable DI graph and Isar schemas:
+dart run build_runner build --delete-conflicting-outputs
+
+# Verify formatting, static analysis, and test suite:
+./scripts/before_push.sh
+```
+
 ## 🗺️ Roadmap
 
 - [x] BLoC state management with `flutter_bloc`
