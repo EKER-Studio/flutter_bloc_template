@@ -1,53 +1,73 @@
-import 'dart:async';
-import 'dart:developer';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
+import 'core/bloc/app_bloc_observer.dart';
 import 'core/config/app_environment.dart';
 import 'core/di/injection.dart';
+import 'core/presentation/screens/app_initialization_error_screen.dart';
+import 'core/utils/crash_reporter.dart';
 
-/// Initializes dependency injection (including the pre-resolved Isar
-/// database), HydratedBloc storage, and launches the app.
-///
-/// Wrapped in [runZonedGuarded] together with [FlutterError.onError] so that
-/// uncaught errors — both inside and outside the Flutter widget tree — are
-/// captured in one place. Errors are persisted via [log] so they survive
-/// release-mode compilation; wire in a production crash reporter
-/// (e.g. Sentry, Firebase Crashlytics) at the marked hooks below.
+/// Initializes dependency injection, HydratedBloc storage, and launches the application.
 Future<void> main() async {
-  runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-      HydratedBloc.storage = await HydratedStorage.build(
-        storageDirectory: kIsWeb
-            ? HydratedStorageDirectory.web
-            : HydratedStorageDirectory(
-                (await getApplicationDocumentsDirectory()).path,
-              ),
-      );
-
-      FlutterError.onError = (FlutterErrorDetails details) {
-        FlutterError.presentError(details);
-        // TODO: Send to production crash reporter (Sentry, Crashlytics, etc.)
-        log(
-          'Uncaught Flutter error',
-          error: details.exception,
-          stackTrace: details.stack,
-        );
-      };
-
-      await configureDependencies(AppConfig.injectableEnv);
-
-      runApp(const App());
-    },
-    (Object error, StackTrace stack) {
-      // TODO: Send to production crash reporter (Sentry, Crashlytics, etc.)
-      log('Uncaught async error', error: error, stackTrace: stack);
-    },
+  // Configure true edge-to-edge mode and transparent system overlays for modern devices.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+    ),
   );
+
+  Bloc.observer = const AppBlocObserver();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    AppCrashReporter.recordError(
+      details.exception,
+      details.stack,
+      reason: 'FlutterError: ${details.context?.toDescription()}',
+      fatal: true,
+    );
+  };
+
+  ui.PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    AppCrashReporter.recordError(
+      error,
+      stack,
+      reason: 'Unhandled asynchronous platform error',
+      fatal: true,
+    );
+    return true;
+  };
+
+  try {
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: kIsWeb
+          ? HydratedStorageDirectory.web
+          : HydratedStorageDirectory(
+              (await getApplicationDocumentsDirectory()).path,
+            ),
+    );
+
+    await configureDependencies(AppConfig.injectableEnv);
+
+    runApp(const App());
+  } catch (error, stackTrace) {
+    await AppCrashReporter.recordError(
+      error,
+      stackTrace,
+      reason: 'App storage or dependency initialization failed',
+      fatal: true,
+    );
+
+    runApp(AppInitializationErrorScreen(error: error, onRetry: () => main()));
+  }
 }

@@ -78,5 +78,9 @@
   "privacyPolicySection4Title": "Complete Data Control",
   "privacyPolicySection4Body": "You retain full control over your data. You can delete or reset application data at any time from device settings.",
   "privacyPolicyContactTitle": "Contact & Support",
-  "privacyPolicyContactBody": "For inquiries or privacy feedback, reach out to our team:"
+  "privacyPolicyContactBody": "For inquiries or privacy feedback, reach out to our team:",
+  "initErrorTitle": "Initialization Error",
+  "initErrorSubtitle": "Failed to initialize application storage or services. Please try restarting or retry.",
+  "retryStartup": "Retry Startup",
+  "initErrorSemantics": "Startup initialization error screen"
 }

@@ -78,5 +78,9 @@
   "privacyPolicySection4Title": "Pełna kontrola nad danymi",
   "privacyPolicySection4Body": "Masz pełną kontrolę nad swoimi danymi. Możesz w każdej chwili usunąć lub zresetować dane z poziomu ustawień urządzenia.",
   "privacyPolicyContactTitle": "Kontakt i wsparcie",
-  "privacyPolicyContactBody": "W przypadku pytań lub uwag dotyczących prywatności napisz do nas:"
+  "privacyPolicyContactBody": "W przypadku pytań lub uwag dotyczących prywatności napisz do nas:",
+  "initErrorTitle": "Błąd inicjalizacji",
+  "initErrorSubtitle": "Nie udało się zainicjalizować pamięci lub usług aplikacji. Spróbuj uruchomić aplikację ponownie lub kliknij ponów.",
+  "retryStartup": "Ponów uruchamianie",
+  "initErrorSemantics": "Ekran błędu inicjalizacji startowej"
 }

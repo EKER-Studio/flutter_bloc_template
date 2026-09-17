@@ -55,6 +55,18 @@ class _AppView extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: _mapThemeMode(state.mode),
+          builder: (context, child) {
+            final mediaQuery = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQuery.copyWith(
+                textScaler: mediaQuery.textScaler.clamp(
+                  minScaleFactor: 0.85,
+                  maxScaleFactor: 2.0,
+                ),
+              ),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
         );
       },
     );
