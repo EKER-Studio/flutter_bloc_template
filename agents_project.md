@@ -52,6 +52,12 @@ Local-First, AI-Native boilerplate utilizing Clean Architecture under a Feature-
   from `flutter analyze`.
 - Regenerate whenever annotations change (see Build & Generation Commands above).
 
+### Logging & UI Tokens
+- **Logging:** Use `AppLogger` (`lib/core/utils/app_logger.dart`) with `AppLogger.debug`, `AppLogger.info`, `AppLogger.warning`, `AppLogger.error`. Never use `print` / `debugPrint`.
+- **UI Colors:** Never hardcode colors. Use `AppColors` (`lib/core/presentation/theme/app_colors.dart`) and `AppFeedbackTheme` (`lib/core/presentation/theme/app_feedback_theme.dart`).
+- **BLoC Concurrency:** Use `bloc_concurrency` transformers (`droppable()`, `restartable()`, `sequential()`) when handling frequent user inputs or preventing duplicate submissions.
+- **Result Types:** Use `CommandResult` and `DataResult<T>` (`lib/core/errors/result.dart`) for standard record-based domain results.
+
 ### Resource Lifecycle & Disposal (concrete items)
 Every BLoC with a `StreamSubscription` must override `close()` and cancel it there.
 - Every `StreamSubscription` cancelled in `close()` or the corresponding BLoC's `onClose`.
