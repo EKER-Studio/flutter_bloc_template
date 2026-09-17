@@ -25,7 +25,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.47.2'
+          flutter-version-file: .flutter-version
 
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
@@ -35,8 +35,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Cache Isar core binary
+        id: cache-isar
+        uses: actions/cache@v4
+        with:
+          path: libisar.so
+          key: ${{ runner.os }}-isar-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Fetch Isar core binary for native tests
+        if: steps.cache-isar.outputs.cache-hit != 'true'
+        run: |
+          ISAR_VERSION=$(awk '/isar_community:/{flag=1; next} flag && /version:/{print $2; exit}' pubspec.lock | tr -d '"')
+          echo "Using Isar version: $ISAR_VERSION"
+          curl -fsSL "https://binaries.isar-community.dev/${ISAR_VERSION}/libisar_linux_x64.so" -o libisar.so
 
       - name: Generate localization files (i18n)
         run: flutter gen-l10n
@@ -45,13 +69,20 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Check formatting
-        run: dart format --set-exit-if-changed lib test
+        run: |
+          FORMAT_DIRS="lib test"
+          [ -d "integration_test" ] && FORMAT_DIRS="$FORMAT_DIRS integration_test"
+          [ -d "test_driver" ] && FORMAT_DIRS="$FORMAT_DIRS test_driver"
+          dart format --set-exit-if-changed $FORMAT_DIRS
 
       - name: Static analysis
         run: flutter analyze
 
       - name: Run unit and widget tests
         run: flutter test --coverage --exclude-tags "golden,screenshot"
+
+      - name: Build Android Debug APK
+        run: flutter build apk --debug
 
       - name: Generate Coverage Job Summary
         if: always()

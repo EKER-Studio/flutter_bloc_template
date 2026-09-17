@@ -10,9 +10,9 @@ permissions:
   contents: write
 
 jobs:
-  build-apk:
+  build-release:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -28,7 +28,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.47.2'
+          flutter-version-file: .flutter-version
 
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
@@ -37,6 +37,16 @@ jobs:
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-pub-
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Install dependencies
         run: flutter pub get
@@ -62,7 +72,11 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Check formatting
-        run: dart format --set-exit-if-changed lib test
+        run: |
+          FORMAT_DIRS="lib test"
+          [ -d "integration_test" ] && FORMAT_DIRS="$FORMAT_DIRS integration_test"
+          [ -d "test_driver" ] && FORMAT_DIRS="$FORMAT_DIRS test_driver"
+          dart format --set-exit-if-changed $FORMAT_DIRS
 
       - name: Static analysis
         run: flutter analyze
@@ -72,13 +86,13 @@ jobs:
 
       - name: Restore signing keystore (if configured)
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ secrets['KEYSTORE_BASE64'] }}
+          KEYSTORE_PASSWORD: ${{ secrets['KEYSTORE_PASSWORD'] }}
+          KEY_ALIAS: ${{ secrets['KEY_ALIAS'] }}
+          KEY_PASSWORD: ${{ secrets['KEY_PASSWORD'] }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "No keystore configured — building unsigned APK"
+            echo "No keystore configured — building unsigned package"
             exit 0
           fi
           echo "$KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
@@ -88,7 +102,18 @@ jobs:
           echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
 
       - name: Build APK (release)
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release \
+            --obfuscate \
+            --split-debug-info=build/symbols \
+            --dart-define=ENVIRONMENT=prod
+
+      - name: Build App Bundle (AAB release)
+        run: |
+          flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/symbols \
+            --dart-define=ENVIRONMENT=prod
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -97,9 +122,25 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
 
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab-${{ github.sha }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Upload debug symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-symbols-${{ github.sha }}
+          path: build/symbols/
+          retention-days: 30
+
       - name: Create GitHub Release (on tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
           generate_release_notes: true
