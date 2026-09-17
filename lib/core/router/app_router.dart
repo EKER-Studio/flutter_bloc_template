@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 
+import '../../features/settings/presentation/screens/licenses_screen.dart';
+import '../../features/settings/presentation/screens/privacy_policy_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/todos/presentation/screens/todo_screen.dart';
 import '../../features/todos/presentation/screens/todo_screen_detail.dart';
@@ -17,6 +19,18 @@ final appRouter = GoRouter(
           path: 'settings',
           name: 'settings',
           builder: (context, state) => const SettingsScreen(),
+          routes: [
+            GoRoute(
+              path: 'licenses',
+              name: 'licenses',
+              builder: (context, state) => const LicensesScreen(),
+            ),
+            GoRoute(
+              path: 'privacy-policy',
+              name: 'privacy-policy',
+              builder: (context, state) => const PrivacyPolicyScreen(),
+            ),
+          ],
         ),
         GoRoute(
           path: 'todo/:id',
