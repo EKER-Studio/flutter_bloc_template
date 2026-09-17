@@ -17,7 +17,7 @@ abstract class DatabaseModule {
     if (existing != null && existing.isOpen) {
       return existing;
     }
-    return await Isar.open([
+    return Isar.open([
       TodoModelSchema,
       UserPreferencesModelSchema,
     ], directory: directory.path);

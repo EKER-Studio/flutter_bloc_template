@@ -95,7 +95,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
       );
       return _mapOrDefault(model);
     } catch (e) {
-      throw DatabaseFailure('Failed to load preferences: ${e.toString()}');
+      throw DatabaseFailure('Failed to load preferences: $e');
     }
   }
 
@@ -104,7 +104,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
     UserThemeMode themeMode,
   ) async {
     try {
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         final model = await _getOrCreateModel();
         model.themeMode = themeMode.name;
         await _isar.userPreferencesModels.put(model);
@@ -113,7 +113,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 
@@ -122,7 +122,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
     bool isEnabled,
   ) async {
     try {
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         final model = await _getOrCreateModel();
         model.isNotificationsEnabled = isEnabled;
         await _isar.userPreferencesModels.put(model);
@@ -131,7 +131,7 @@ class UserPreferencesRepositoryImpl implements UserPreferencesRepository {
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 }

@@ -87,7 +87,7 @@ class TodoRepositoryImpl implements TodoRepository {
           .findAll();
       return models.map((m) => m.toEntity()).toList();
     } catch (e) {
-      throw DatabaseFailure('Failed to load todos: ${e.toString()}');
+      throw DatabaseFailure('Failed to load todos: $e');
     }
   }
 
@@ -98,14 +98,14 @@ class TodoRepositoryImpl implements TodoRepository {
         ..title = title.trim()
         ..createdAt = DateTime.now();
 
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         await _isar.todoModels.put(model);
       });
       return (true, null);
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 
@@ -115,7 +115,7 @@ class TodoRepositoryImpl implements TodoRepository {
   }) async {
     try {
       var found = false;
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         final model = await _isar.todoModels.get(id);
         if (model == null) {
           return;
@@ -132,21 +132,21 @@ class TodoRepositoryImpl implements TodoRepository {
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 
   @override
   Future<(bool success, Failure? failure)> delete({required int id}) async {
     try {
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         await _isar.todoModels.delete(id);
       });
       return (true, null);
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 
@@ -159,14 +159,14 @@ class TodoRepositoryImpl implements TodoRepository {
         ..isCompleted = todo.isCompleted
         ..createdAt = todo.createdAt;
 
-      await _isar.writeTxn(() async {
+      await _isar.writeTxn<void>(() async {
         await _isar.todoModels.put(model);
       });
       return (true, null);
     } on IsarError catch (e) {
       return (false, DatabaseFailure(e.message));
     } catch (e) {
-      return (false, DatabaseFailure('Unexpected error: ${e.toString()}'));
+      return (false, DatabaseFailure('Unexpected error: $e'));
     }
   }
 }

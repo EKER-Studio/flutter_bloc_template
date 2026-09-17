@@ -1,0 +1,17 @@
+targets:
+  $default:
+    sources:
+      exclude:
+        - "lib/l10n/**"
+    builders:
+      isar_community_generator:isar_community_generator:
+        generate_for:
+          - lib/features/**/data/models/**.dart
+      injectable_generator:injectable_builder:
+        generate_for:
+          - lib/core/di/**
+          - lib/core/database/**
+          - lib/core/presentation/bloc/**
+          - lib/features/**/domain/use_cases/**
+          - lib/features/**/data/**
+          - lib/features/**/presentation/bloc/**

@@ -28,11 +28,6 @@ void main() {
       () => mockIsar.collection<UserPreferencesModel>(),
     ).thenReturn(mockCollection);
 
-    when(() => mockIsar.writeTxn<Null>(any())).thenAnswer((invocation) async {
-      final callback = invocation.positionalArguments[0] as Function;
-      await callback();
-      return null;
-    });
     when(() => mockIsar.writeTxn<void>(any())).thenAnswer((invocation) async {
       final callback = invocation.positionalArguments[0] as Function;
       await callback();

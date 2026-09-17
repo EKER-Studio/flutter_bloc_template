@@ -59,7 +59,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       onError: (Object error) {
         final failure = error is Failure
             ? error
-            : DatabaseFailure('Watch stream error: ${error.toString()}');
+            : DatabaseFailure('Watch stream error: $error');
         add(TodoWatchFailed(failure));
       },
     );
@@ -80,7 +80,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         emit(TodoLoadFailure(result.$2!));
       }
     } catch (e) {
-      emit(TodoLoadFailure(DatabaseFailure('Add failed: ${e.toString()}')));
+      emit(TodoLoadFailure(DatabaseFailure('Add failed: $e')));
     }
   }
 
@@ -94,7 +94,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         emit(TodoLoadFailure(result.$2!));
       }
     } catch (e) {
-      emit(TodoLoadFailure(DatabaseFailure('Toggle failed: ${e.toString()}')));
+      emit(TodoLoadFailure(DatabaseFailure('Toggle failed: $e')));
     }
   }
 
@@ -108,7 +108,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         emit(TodoLoadFailure(result.$2!));
       }
     } catch (e) {
-      emit(TodoLoadFailure(DatabaseFailure('Delete failed: ${e.toString()}')));
+      emit(TodoLoadFailure(DatabaseFailure('Delete failed: $e')));
     }
   }
 
@@ -122,7 +122,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
         emit(TodoLoadFailure(result.$2!));
       }
     } catch (e) {
-      emit(TodoLoadFailure(DatabaseFailure('Restore failed: ${e.toString()}')));
+      emit(TodoLoadFailure(DatabaseFailure('Restore failed: $e')));
     }
   }
 
