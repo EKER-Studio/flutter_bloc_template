@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-09-18
+
+### Release v1.3.0 — Production Hardening, Store Readiness & DX Optimization
+
+Comprehensive milestone release upgrading the BLoC starter template with production resilience, store-ready UI components, automated screenshot testing, CI/CD artifact generation, and developer tooling optimizations.
+
+Compare: [`v1.2.0...v1.3.0`](https://github.com/EKER-Studio/flutter_bloc_template/compare/v1.2.0...v1.3.0)
+
+#### 🚀 Highlights & Features
+
+* **Tooling, Linter & Build Optimization (DX):**
+  * Modernized `analysis_options.yaml` with strict analyzer rules (`avoid_void_async`, `directives_ordering`, `prefer_const_*`, unawaited futures enforcement) and excluded generated schema files.
+  * Scoped code generation in `build.yaml` (`isar_generator` restricted to `data/**`, `injectable_builder` scoped to DI entrypoints and BLoCs) speeding up build runner by 3–5×.
+  * Pinned SDK constraints to `^3.12.2` and upgraded core dependencies.
+  * Integrated `bloc_concurrency: ^0.3.0` providing official event transformers (`droppable()`, `restartable()`, `sequential()`) for UI debouncing and duplicate submission guards.
+  * Introduced centralized structured logging via `AppLogger` (`lib/core/utils/app_logger.dart`) wrapping `dart:developer.log` with log severity levels and automatic release mode filtering.
+  * Added record-based `Result` type aliases (`lib/core/errors/result.dart`) for functional Clean Architecture returns (`CommandResult`, `DataResult<T>`).
+
+* **CI/CD & Verification Scripts:**
+  * Revamped `scripts/before_push.sh` with ANSI color formatting, step timing benchmarks, and complete validation across pub, l10n, build_runner, format, analyze, and test suites.
+  * Enhanced GitHub Actions CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) with runner caching and parallel job execution.
+  * Upgraded Release workflow ([`.github/workflows/release.yml`](.github/workflows/release.yml)) to build Android App Bundles (`.aab`) alongside APKs, uploading ProGuard mapping symbols and publishing GitHub Releases automatically on `v*` tags.
+
+* **Core Resilience, Bootstrap & Lifecycle:**
+  * Fortified local storage via `DatabaseHelper` in `lib/core/database/database_module.dart` featuring auto-compaction (`10MB, 1.25x`), safe hot-restart lifecycle handling, automatic backup of corrupted databases (`corrupted_*.isar.bak`), and post-backgrounding integrity verification.
+  * Implemented robust bootstrap error handling in `lib/main.dart` with edge-to-edge mode, Flutter/platform dispatcher error hooks, and an `AppInitializationErrorScreen` fallback.
+  * Integrated global `AppBlocObserver` for unhandled error interception across all BLoCs.
+  * Added on-device rotating crash log file (`crash_log.txt`, 1 MB limit) managed by `AppCrashReporter`.
+  * Guarded typography in `lib/app.dart` by clamping `textScaler` between `0.85` and `2.0`.
+  * Added cryptographic `FieldCipher` utility (`lib/core/utils/field_cipher.dart`) implementing AES-256-CBC + HMAC-SHA256 Encrypt-then-MAC with constant-time verification.
+
+* **Design System, Accessibility & UI Primitives:**
+  * Added responsive layout tokens (`lib/core/presentation/theme/app_layout_tokens.dart`) with `ContextLayout` extensions for phones, foldables, tablets, and desktop viewports.
+  * Introduced `ClampedLayout` widget preventing view stretching on wide screens.
+  * Added semantic feedback theming (`AppFeedbackTheme`) and floating `AppSnackBar` with status icons for Success, Error, Warning, and Info states.
+  * Created accessible `StateMessageCard` component for empty, welcome, and error views with action buttons.
+  * Added `AdaptiveNavigationScaffold` dynamically switching between bottom `NavigationBar` on compact screens and side `NavigationRail` on tablets/desktops.
+  * Added string utility extension `capitalizeFirst()`.
+
+* **Store-Ready Compliance & In-App Legal Screens:**
+  * Built accessible settings components (`SettingsTile`, `SettingsToggle`, `SettingsSectionHeader`) with full accessibility semantics.
+  * Added in-app Open Source Licenses screen (`CustomLicenseScreen`) with searchable package list.
+  * Added in-app Privacy Policy screen (`PrivacyPolicyScreen`) with external legal link launching via `url_launcher`.
+  * Surfaced dynamic app version and build metadata via `package_info_plus`.
+
+* **Platform Configurations (Android & iOS):**
+  * Android: Added `proguard-rules.pro` keeping Isar native bindings and JNI callbacks; enabled `coreLibraryDesugaring` in `build.gradle.kts`; set `minSdk 23` and NDK ABI filters (`arm64-v8a`, `armeabi-v7a`, `x86_64`).
+  * iOS: Normalized deployment target to `15.0` across `Podfile` and `project.pbxproj`.
+
+* **Automated Screenshot Testing:**
+  * Added automated integration test harness in `integration_test/screenshot_test.dart` for capturing App Store / Google Play marketing screenshots across multiple locales.
+  * Added screenshot execution script in `scripts/screenshots/run_screenshots.sh`.
+
 ## [1.2.0] - 2026-09-09
 
 ### Release v1.2.0 — Architecture Audits, Governance & Release Automation
