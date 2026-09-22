@@ -13,8 +13,10 @@ analyzer:
     - ".dart_tool/**"
     - "build/**"
     - "build/web/**"
+    # Swift Package Manager & CocoaPods
+    - "ios/Pods/**"
     - "build/ios/**"
-    # Android
+    # Native platforms
     - "android/**"
     - "ios/**"
     - "web/**"
@@ -31,6 +33,7 @@ linter:
   rules:
     # Error Prevention & Async Safety
     - cancel_subscriptions
+    - avoid_void_async
     - avoid_print
     - avoid_empty_else
     - avoid_relative_lib_imports
@@ -47,16 +50,21 @@ linter:
     - prefer_void_to_null
     - unnecessary_await_in_return
     - noop_primitive_operations
+    - no_adjacent_strings_in_list
+    - unnecessary_statements
+    - throw_in_finally
 
-    # Clean Code & Const Optimization
+    # Code Quality & Immutability (Const Rebuild Optimizations)
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_const_declarations
+    - prefer_final_in_for_each
     - always_declare_return_types
     - avoid_returning_null_for_void
     - curly_braces_in_flow_control_structures
     - depend_on_referenced_packages
     - no_leading_underscores_for_local_identifiers
-    - prefer_final_in_for_each
     - prefer_conditional_assignment
-    - prefer_const_declarations
     - prefer_if_null_operators
     - prefer_is_empty
     - prefer_is_not_empty
@@ -73,6 +81,11 @@ linter:
     - use_super_parameters
     - avoid_unnecessary_containers
     - unnecessary_parenthesis
+    - unnecessary_breaks
+    - combinators_ordering
+    - dangling_library_doc_comments
+    - library_annotations
+    - tighten_type_of_initializing_formals
 
     # Flutter Performance & UI Polish
     - sized_box_for_whitespace

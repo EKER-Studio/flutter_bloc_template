@@ -126,7 +126,7 @@ class TodoRepositoryImpl implements TodoRepository {
         await _isar.todoModels.put(model);
       });
       if (!found) {
-        return (false, NotFoundFailure('Todo not found'));
+        return (false, const NotFoundFailure('Todo not found'));
       }
       return (true, null);
     } on IsarError catch (e) {
