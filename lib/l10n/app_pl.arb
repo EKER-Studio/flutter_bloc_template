@@ -82,5 +82,7 @@
   "initErrorTitle": "Błąd inicjalizacji",
   "initErrorSubtitle": "Nie udało się zainicjalizować pamięci lub usług aplikacji. Spróbuj uruchomić aplikację ponownie lub kliknij ponów.",
   "retryStartup": "Ponów uruchamianie",
-  "initErrorSemantics": "Ekran błędu inicjalizacji startowej"
+  "initErrorSemantics": "Ekran błędu inicjalizacji startowej",
+  "rateApp": "Oceń aplikację",
+  "couldNotOpenStore": "Nie udało się otworzyć sklepu z aplikacjami"
 }

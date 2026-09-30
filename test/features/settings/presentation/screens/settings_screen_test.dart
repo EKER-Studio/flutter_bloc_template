@@ -32,6 +32,7 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('System default'), findsOneWidget);
     expect(find.text('Notifications'), findsOneWidget);
+    expect(find.text('Rate App'), findsOneWidget);
 
     bloc.close();
   });
@@ -58,6 +59,7 @@ void main() {
 
     expect(find.text('Ustawienia'), findsOneWidget);
     expect(find.text('Domyślny systemowy'), findsOneWidget);
+    expect(find.text('Oceń aplikację'), findsOneWidget);
     expect(find.text('Powiadomienia'), findsOneWidget);
 
     bloc.close();

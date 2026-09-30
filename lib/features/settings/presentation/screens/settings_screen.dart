@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/presentation/extensions/failure_ui_extension.dart';
+import '../../../../core/presentation/utils/app_snackbar.dart';
 import '../../../../core/presentation/widgets/app_error_view.dart';
 import '../../../../core/presentation/widgets/app_loading_indicator.dart';
+import '../../../../core/utils/crash_reporter.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/user_preferences.dart';
 import '../bloc/settings_bloc.dart';
@@ -115,12 +118,61 @@ class SettingsScreen extends StatelessWidget {
                 title: l10n.licenses,
                 onTap: () => context.go('/settings/licenses'),
               ),
+              CustomSettingsTile(
+                icon: Icons.star_outline_rounded,
+                title: l10n.rateApp,
+                onTap: () => _rateApp(context),
+              ),
               const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _rateApp(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final packageName = packageInfo.packageName;
+      final marketUri = Uri.parse('market://details?id=$packageName');
+      final webUri = Uri.parse(
+        'https://play.google.com/store/apps/details?id=$packageName',
+      );
+
+      final launched = await launchUrl(
+        marketUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        final webLaunched = await launchUrl(
+          webUri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (!webLaunched && context.mounted) {
+          AppSnackBar.show(
+            context,
+            message: l10n.couldNotOpenStore,
+            type: SnackBarType.error,
+          );
+        }
+      }
+    } catch (error, stack) {
+      AppCrashReporter.recordError(
+        error,
+        stack,
+        reason: 'Failed to launch app store review URL',
+        fatal: false,
+      );
+      if (context.mounted) {
+        AppSnackBar.show(
+          context,
+          message: l10n.couldNotOpenStore,
+          type: SnackBarType.error,
+        );
+      }
+    }
   }
 
   void _showThemePicker(BuildContext context, UserThemeMode current) {

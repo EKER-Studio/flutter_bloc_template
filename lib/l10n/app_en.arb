@@ -82,5 +82,13 @@
   "initErrorTitle": "Initialization Error",
   "initErrorSubtitle": "Failed to initialize application storage or services. Please try restarting or retry.",
   "retryStartup": "Retry Startup",
-  "initErrorSemantics": "Startup initialization error screen"
+  "initErrorSemantics": "Startup initialization error screen",
+  "rateApp": "Rate App",
+  "@rateApp": {
+    "description": "Label for rate app tile in settings"
+  },
+  "couldNotOpenStore": "Could not open app store",
+  "@couldNotOpenStore": {
+    "description": "Error message when opening app store fails"
+  }
 }
