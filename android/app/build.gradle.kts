@@ -15,7 +15,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.ekerstudio.flutter_blueprint"
-    compileSdk = flutter.compileSdkVersion
+    // Ensures compatibility with plugins and AndroidX dependencies requiring compileSdk 37+
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
